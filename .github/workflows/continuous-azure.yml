@@ -47,13 +47,14 @@ jobs:
 
 
   deploy_infra_dev:
+    name: "Deploy Infrastructure (Dev)"
     if: (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     needs: integrate
     environment:
       name: 'Dev'
-    permissions:
-      id-token: write
     outputs:
       webAppName: ${{ steps.deploy-infrastructure.outputs.webAppName }}
     steps:
@@ -81,15 +82,16 @@ jobs:
 
 
   deploy_app_dev:
+    name: "Deploy Application (Dev)"
     if: (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     needs:
       - deploy_infra_dev
     environment:
       name: 'Dev'
       url: ${{ steps.deploy-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write
     steps:
       - name: Login to Azure
         uses: azure/login@v1
@@ -112,8 +114,11 @@ jobs:
           package: .
 
   deploy_infra_staging:
+    name: "Deploy Infrastructure (Staging)"
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     needs: 
       - integrate
     environment:
@@ -137,14 +142,18 @@ jobs:
         id: deploy-infrastructure
         uses: azure/arm-deploy@v1
         with:
-          scope: 'rg-sp-mj-nonprod'
+          scope: resourcegroup
+          resourceGroupName: 'rg-sp-mj-nonprod'
           template: ./infra/webapp.production-workload.bicep
           parameters: 'environment=staging'
           failOnStdErr: false
 
   deploy_app_staging:
+    name: "Deploy Application (Staging)"
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     needs: 
       - deploy_infra_staging
     environment:
