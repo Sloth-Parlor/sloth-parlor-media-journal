@@ -175,8 +175,9 @@ jobs:
         id: deploy-webapp
         uses: azure/webapps-deploy@v2
         with:
+          resource-group-name: 'rg-sp-mj-nonprod'
           app-name: ${{ needs.deploy_infra_staging.outputs.webAppName }}
-          slot-name: 'Production' # Free tier only supports production slot deployment
+          slot-name: 'Production' # Free/basic tiers only support "production" slot deployment
           package: .
 
       
