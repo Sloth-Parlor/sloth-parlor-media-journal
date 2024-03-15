@@ -1,0 +1,19 @@
+{
+  "analyzers": {
+    "core": {
+      "rules": {
+        "no-unused-params": {
+          "level": "error"
+        }
+      },
+      "verbose": true
+    }
+  },
+  "formatting": {
+    "indentation": {
+      "style": "space",
+      "size": 2
+    },
+    "insertFinalNewline": true
+  }
+}
