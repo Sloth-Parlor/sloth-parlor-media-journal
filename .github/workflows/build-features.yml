@@ -1,4 +1,4 @@
-name: Build and verify feature branches
+name: Build and Verify Media Journal Features 
 
 on:
   pull_request:

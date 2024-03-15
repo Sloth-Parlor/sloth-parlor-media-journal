@@ -1,4 +1,4 @@
-name: Media Journal CI/CD Workflow
+name: Media Journal CI/CD
 
 on:
   push:
