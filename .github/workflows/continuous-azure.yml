@@ -144,7 +144,7 @@ jobs:
         with:
           scope: resourcegroup
           resourceGroupName: 'rg-sp-mj-nonprod'
-          template: ./infra/webapp.production-workload.bicep
+          template: webapp.production-workload.bicep
           parameters: 'environment=staging'
           failOnStdErr: false
 
