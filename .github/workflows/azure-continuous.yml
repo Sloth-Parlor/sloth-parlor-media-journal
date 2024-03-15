@@ -1,0 +1,107 @@
+name: Media Journal CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+    
+jobs:
+
+  build:
+    name: Build, verify, and publish artifacts
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.x'
+
+      - uses: ./.github/actions/build-webapp
+
+      - name: dotnet publish
+        run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/mj-webapp
+
+      - name: Upload app artifact(s)
+        uses: actions/upload-artifact@v3
+        with:
+          name: mj-webapp
+          path: ${{env.DOTNET_ROOT}}/mj-webapp
+
+      - name: Upload infrastructure declarations as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: infra
+          path: ./infrastructure/azure
+
+  deploy_infra_staging:
+    name: "Deploy Infrastructure"
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    needs: 
+      - build
+    environment:
+      name: 'Staging'
+    outputs:
+      webAppName: ${{ steps.deploy-infrastructure.outputs.webAppName }}
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Download infrastructure artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: infra
+
+      - name: Deploy Bicep file
+        id: deploy-infrastructure
+        uses: azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          resourceGroupName: 'rg-sp-mj-nonprod'
+          template: webapp.production-workload.bicep
+          parameters: 'environment=staging'
+          failOnStdErr: false
+
+  deploy_app_staging:
+    name: "Deploy Application (Staging)"
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    needs: 
+      - deploy_infra_staging
+    environment:
+      name: 'Staging'
+    steps:
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: mj-webapp
+
+      - name: Deploy to Azure Web App
+        id: deploy-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          resource-group-name: 'rg-sp-mj-nonprod'
+          app-name: ${{ needs.deploy_infra_staging.outputs.webAppName }}
+          slot-name: 'Production' # Free/basic tiers only support "production" slot deployment
+          package: .
+
+      

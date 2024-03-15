@@ -1,0 +1,26 @@
+name: Build and verify feature branches
+
+on:
+  pull_request:
+    branches:
+      - feature/*
+  push:
+    branches:
+      - feature/*
+
+jobs:
+  # @todo: Add infrastructure verification
+
+  integrate:
+    # @todo: Add unit tests
+    name: Integrate (Build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "8.x"
+
+      - uses: ./.github/actions/build-webapp
