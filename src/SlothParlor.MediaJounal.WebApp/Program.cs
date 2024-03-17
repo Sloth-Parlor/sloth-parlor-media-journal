@@ -1,10 +1,34 @@
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 using SlothParlor.MediaJounal.WebApp.Components;
+
+// Must be set before OpenIdConnectOptions are configured
+JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var msGraphConfigSection = builder.Configuration.GetSection("MicrosoftGraphApi");
+var msGraphScopes = msGraphConfigSection["Scopes"]?.Split(' ');
+
+builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, Constants.AzureAdB2C)
+    .EnableTokenAcquisitionToCallDownstreamApi(msGraphScopes)
+        .AddDownstreamApi("MicrosoftGraphApi", msGraphConfigSection)
+        .AddInMemoryTokenCaches();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+}).AddMicrosoftIdentityUI();
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
+        .AddMicrosoftIdentityConsentHandler()
     .AddInteractiveWebAssemblyComponents();
 
 var app = builder.Build();
@@ -23,8 +47,15 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()

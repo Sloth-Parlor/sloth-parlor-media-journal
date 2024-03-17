@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{14CFEF01-8518-4A98-B20A-9B65D4A9B61E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlothParlor.MediaJounal.WebApp", "src\SlothParlor.MediaJounal.WebApp\SlothParlor.MediaJounal.WebApp.csproj", "{5768DC3E-914A-4EBC-985A-7F823D15A3C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJounal.WebApp", "src\SlothParlor.MediaJounal.WebApp\SlothParlor.MediaJounal.WebApp.csproj", "{5768DC3E-914A-4EBC-985A-7F823D15A3C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlothParlor.MediaJounal.WebApp.Client", "src\SlothParlor.MediaJounal.WebApp.Client\SlothParlor.MediaJounal.WebApp.Client.csproj", "{A313E1E9-939C-4D13-A758-11CE50C8A35F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJounal.WebApp.Client", "src\SlothParlor.MediaJounal.WebApp.Client\SlothParlor.MediaJounal.WebApp.Client.csproj", "{A313E1E9-939C-4D13-A758-11CE50C8A35F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

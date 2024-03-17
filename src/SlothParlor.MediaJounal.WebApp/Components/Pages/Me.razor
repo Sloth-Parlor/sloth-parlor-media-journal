@@ -1,0 +1,29 @@
+﻿@page "/me"
+
+@using System.Text.Json
+
+<AuthorizeView>
+    <Authorized>
+        <h3>@context.User.Identity?.Name!</h3>
+        <pre>
+            @(JsonSerializer.Serialize(
+                context.User.Claims
+                    .GroupBy(c => c.Issuer)
+                    .Select(c => new 
+                    { 
+                        Issuer = c.Key,
+                        Claims = c.Select(c => new { c.Type, c.Value }),
+                    }), 
+                options: new() 
+                { 
+                    WriteIndented = true,
+                }))
+        </pre>
+    </Authorized>
+    <NotAuthorized>
+        Not signed in.
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+}
