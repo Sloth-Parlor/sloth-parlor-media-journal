@@ -18,13 +18,9 @@ builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration,
         .AddDownstreamApi("MicrosoftGraphApi", msGraphConfigSection)
         .AddInMemoryTokenCaches();
 
-builder.Services.AddControllersWithViews(options =>
-{
-    var policy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-    options.Filters.Add(new AuthorizeFilter(policy));
-}).AddMicrosoftIdentityUI();
+builder.Services
+    .AddRazorPages()
+    .AddMicrosoftIdentityUI();
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
