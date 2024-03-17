@@ -1,6 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using SlothParlor.MediaJounal.WebApp.Components;
