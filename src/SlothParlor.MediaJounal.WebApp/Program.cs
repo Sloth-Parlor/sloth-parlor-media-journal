@@ -10,6 +10,35 @@ JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    var trustedOrigins = new List<string>();
+    
+    var applicationOrigins = builder.Configuration
+        .GetSection("Cors:ApplicationOrigins")
+        .Get<string[]>();
+
+    if (applicationOrigins is null || applicationOrigins.Length == 0)
+    {
+        throw new ArgumentException("ApplicationOrigins must be set in the configuration.", nameof(applicationOrigins));
+    }
+
+    trustedOrigins.AddRange(applicationOrigins);
+    trustedOrigins.AddRange(builder.Configuration
+        .GetSection("Cors:IdentityOrigins")
+        .Get<string[]>() ?? []);
+
+    options.AddDefaultPolicy(policyBuilder =>
+    {
+        policyBuilder.WithOrigins([.. trustedOrigins])
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
+// Configure Identity
 var msGraphConfigSection = builder.Configuration.GetSection("MicrosoftGraphApi");
 var msGraphScopes = msGraphConfigSection["Scopes"]?.Split(' ');
 
@@ -52,6 +81,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapRazorPages();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
