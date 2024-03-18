@@ -67,9 +67,9 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           scope: resourcegroup
-          resourceGroupName: 'rg-sp-mj-nonprod'
-          template: webapp.production-workload.bicep
-          parameters: 'environment=staging'
+          resourceGroupName: 'rg-useast2-sp-mj-preprod'
+          template: main.pipeline.bicep
+          parameters: 'envName=staging'
           failOnStdErr: false
 
   deploy_app_staging:
@@ -99,7 +99,7 @@ jobs:
         id: deploy-webapp
         uses: azure/webapps-deploy@v2
         with:
-          resource-group-name: 'rg-sp-mj-nonprod'
+          resource-group-name: 'rg-useast2-sp-mj-preprod'
           app-name: ${{ needs.deploy_infra_staging.outputs.webAppName }}
           slot-name: 'Production' # Free/basic tiers only support "production" slot deployment
           package: .

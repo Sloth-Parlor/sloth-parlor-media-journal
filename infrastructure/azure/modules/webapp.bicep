@@ -2,10 +2,13 @@
  * the media journal webapp */
 
 // Params
+// -------------
 
-param appName string = 'spmj-app'
+param appNamePrefix string
 
 @allowed([
+  'lab'
+  'dev'
   'staging'
   'prod'
 ])
@@ -13,42 +16,57 @@ param environment string = 'staging'
 
 param location string = resourceGroup().location
 
+param appResourcesSubnetId string
+
+param enabled bool = true
 
 // Common values
-var envQualified = '${appName}-${environment}'
+// -------------
+
+var envQualified = '${appNamePrefix}-${environment}'
+var isProd = environment == 'prod'
+var alwaysOn = isProd
+
+// Existing resources
+// -------------
+
+resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' existing = {
+  name: '${isProd ? 'prod' : 'nonprod'}-linux-webapp-plan'
+}
 
 // Provisioned resources
-
-resource appServicePlan 'Microsoft.Web/serverfarms@2023-01-01' = {
-  name: '${envQualified}-linux-webapp-plan'
-  location: location
-  kind: 'linux'
-  sku: {
-    name: 'B1'
-    tier: 'Basic'
-  }
-  properties: {
-    reserved: true
-  }
-}
+// -------------
 
 resource webapp 'Microsoft.Web/sites@2023-01-01' = {
   name: '${envQualified}-webapp'
   location: location
   kind: 'app,linux'
   properties: {
-    serverFarmId: appServicePlan.id
-    enabled: true
+    enabled: enabled
     httpsOnly: true
     publicNetworkAccess: 'Enabled'
     reserved: true // must be true when the app kind is linux
+    serverFarmId: appServicePlan.id
+
     siteConfig: {
-      alwaysOn: false
+      alwaysOn: alwaysOn
       linuxFxVersion: 'DOTNETCORE|8.0'
       minTlsVersion: '1.2'
       numberOfWorkers: 1
       scmType: 'GitHubAction'
+      vnetRouteAllEnabled: true
     }
+  }
+  identity: {
+    type: 'SystemAssigned'
+  }
+}
+
+resource vnetIntegration 'Microsoft.Web/sites/networkConfig@2021-01-01' = {
+  name: 'virtualNetwork'
+  parent: webapp
+  properties: {
+    subnetResourceId: appResourcesSubnetId
   }
 }
 
@@ -68,6 +86,5 @@ resource webappScmPublishingPolicy 'Microsoft.Web/sites/basicPublishingCredentia
   }
 }
 
+output managedIdentityPrincipalId string = webapp.identity.principalId
 output webAppName string = webapp.name
-output webAppHostname string = webapp.properties.defaultHostName
-
