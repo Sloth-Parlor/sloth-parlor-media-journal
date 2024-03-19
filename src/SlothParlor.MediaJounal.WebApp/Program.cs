@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using Azure.Identity;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using SlothParlor.MediaJounal.WebApp.Components;
@@ -7,6 +8,13 @@ using SlothParlor.MediaJounal.WebApp.Components;
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Additional configuration sources
+if (builder.Configuration.GetValue<Uri>("AzureKeyVault:Uri") is Uri keyVaultUri)
+{
+    builder.Configuration
+        .AddAzureKeyVault(keyVaultUri, new DefaultAzureCredential());
+}
 
 // Configure CORS
 builder.Services.AddCors(options =>
