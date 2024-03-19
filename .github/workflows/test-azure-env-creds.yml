@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'GitHub Actions environment used to contextualize the az login'
+        description: 'Environment'
         type: choice
         required: true
         options:
@@ -25,6 +25,7 @@ jobs:
       name: ${{ github.event.inputs.environment }}
     steps:
       - name: Login via OpenID Connect
+        id: login
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -33,6 +34,7 @@ jobs:
           enable-AzPSSession: true
 
       - name: 'Get Azure context'
+        id: get-context
         uses: azure/powershell@v1
         with:
           inlineScript: |
