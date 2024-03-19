@@ -99,7 +99,7 @@ jobs:
         id: deploy-webapp
         uses: azure/webapps-deploy@v2
         with:
-          resource-group-name: 'rg-useast2-sp-mj-preprod'
+          resource-group-name: 'rg-sp-useast2-mj-preprod'
           app-name: ${{ needs.deploy_infra_staging.outputs.webAppName }}
           slot-name: 'Production' # Free/basic tiers only support "production" slot deployment
           package: .
