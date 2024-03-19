@@ -12,7 +12,7 @@ param appNamePrefix string
   'staging'
   'prod'
 ])
-param environment string = 'staging'
+param environment string
 
 param location string = resourceGroup().location
 

@@ -17,15 +17,31 @@ param appNamePrefix string = 'sp-mj'
 ])
 param envName string
 
+param appVnetName string
+
+param subnetAddressPrefix string
+
 param location string = resourceGroup().location
 
-// Common values
+// Existing resources
 // -------------
-
-var envQualified = '${appNamePrefix}-${envName}'
+resource appCommonRg 'Microsoft.Resources/resourceGroups@2023-07-01' existing = {
+  name: 'rg-sp-useast2-app-common-preprod'
+  scope: subscription()
+}
 
 // Provisioned resources
 // -------------
+
+module appSubnet 'modules/app-subnet.bicep' = {
+  name: 'appSubnet'
+  scope: appCommonRg
+  params: {
+    appVnetName: appVnetName
+    subnetName: '${appNamePrefix}-${envName}-app-subnet'
+    addressPrefix: subnetAddressPrefix
+  }
+}
 
 module servicePlans 'modules/plans.bicep' = {
   name: 'servicePlans'
@@ -35,68 +51,13 @@ module servicePlans 'modules/plans.bicep' = {
   }
 }
 
-resource appVirtualNetwork 'Microsoft.Network/virtualNetworks@2023-09-01' = {
-  name: '${envQualified}-app-vnet'
-  location: location
-  properties: {
-    addressSpace: {
-      addressPrefixes: ['10.0.0.0/16']
-    }
-  }
-}
-
-resource appResourcesSubnet 'Microsoft.Network/virtualNetworks/subnets@2020-06-01' = {
-  parent: appVirtualNetwork
-  name: '${appNamePrefix}-resources'
-  properties: {
-    addressPrefix: '10.0.0.0/26'
-    serviceEndpoints: [
-      {
-        service: 'Microsoft.KeyVault'
-      }
-    ]
-    delegations: [
-      {
-        name: '${appNamePrefix}-app-services-delegation'
-        properties: {
-          serviceName: 'Microsoft.Web/serverFarms'
-        }
-      }
-    ]
-  }
-}
-
-resource appKeyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
-  name: '${envQualified}-kv'
-  location: location
-  properties: {
-    tenantId: subscription().tenantId
-    accessPolicies: [
-      {
-        tenantId: subscription().tenantId
-        objectId: webapp.outputs.managedIdentityPrincipalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-      }
-    ]
-    networkAcls: {
-      defaultAction: 'Deny'
-      bypass: 'AzureServices'
-      virtualNetworkRules: [
-        {
-          id: appResourcesSubnet.id
-          ignoreMissingVnetServiceEndpoint: false
-        }
-      ]
-    }
-    sku: {
-      family: 'A'
-      name: 'standard'
-    }
+module keyvault 'modules/keyvault.bicep' = {
+  name: 'keyvault'
+  params: {
+    appNamePrefix: appNamePrefix
+    environment: envName
+    location: location
+    appResourcesSubnetId: appSubnet.outputs.appSubnetId
   }
 }
 
@@ -104,7 +65,7 @@ module webapp 'modules/webapp.bicep' = {
   name: 'webapp'
   params: {
     appNamePrefix: appNamePrefix
-    appResourcesSubnetId: appResourcesSubnet.id
+    appResourcesSubnetId: appSubnet.outputs.appSubnetId
     environment: envName
     location: location
     enabled: false
