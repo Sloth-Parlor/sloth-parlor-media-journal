@@ -19,11 +19,6 @@ param subnetName string
 
 param location string = resourceGroup().location
 
-// Common values
-// -------------
-
-var envQualified = '${appNamePrefix}-${envName}'
-
 // Existing resources
 // -------------
 
