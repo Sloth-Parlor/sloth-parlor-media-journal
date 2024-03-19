@@ -67,9 +67,9 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           scope: resourcegroup
-          resourceGroupName: 'rg-useast2-sp-mj-preprod'
+          resourceGroupName: 'rg-sp-useast2-mj-preprod'
           template: main.pipeline.bicep
-          parameters: 'envName=staging'
+          parameters: 'envName=staging appVnetName=sp-apps-vnet subnetName=sp-mj-staging-app-subnet'
           failOnStdErr: false
 
   deploy_app_staging:
