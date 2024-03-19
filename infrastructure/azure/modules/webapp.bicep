@@ -22,10 +22,17 @@ param enabled bool = true
 
 // Common values
 // -------------
+var aspNetCoreEnvNameMap = {
+  lab: 'Development'
+  dev: 'Development'
+  staging: 'Staging'
+  prod: 'Production'
+}
 
 var envQualified = '${appNamePrefix}-${environment}'
 var isProd = environment == 'prod'
 var alwaysOn = isProd
+var aspNetCoreEnv = aspNetCoreEnvNameMap[environment]
 
 // Existing resources
 // -------------
@@ -47,14 +54,22 @@ resource webapp 'Microsoft.Web/sites@2023-01-01' = {
     publicNetworkAccess: 'Enabled'
     reserved: true // must be true when the app kind is linux
     serverFarmId: appServicePlan.id
-
     siteConfig: {
       alwaysOn: alwaysOn
       linuxFxVersion: 'DOTNETCORE|8.0'
       minTlsVersion: '1.2'
       numberOfWorkers: 1
       scmType: 'GitHubAction'
-      vnetRouteAllEnabled: true
+      appSettings: [
+        {
+          name: 'WEBSITE_WEBDEPLOY_USE_SCM'
+          value: string(!isProd)
+        }
+        {
+          name: 'ASPNETCORE_ENVIRONMENT'
+          value: aspNetCoreEnv
+        }
+      ]
     }
   }
   identity: {
