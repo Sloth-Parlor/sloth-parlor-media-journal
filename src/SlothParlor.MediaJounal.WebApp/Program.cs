@@ -62,6 +62,9 @@ builder.Services.AddRazorComponents()
         .AddMicrosoftIdentityConsentHandler()
     .AddInteractiveWebAssemblyComponents();
 
+builder.Services
+    .AddCascadingAuthenticationState();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -77,6 +80,11 @@ else
 }
 
 app.UseHttpsRedirection();
+
+if (app.Configuration.GetValue<string?>("PathBase") is string pathBase && !string.IsNullOrWhiteSpace(pathBase))
+{
+    app.UsePathBase(pathBase);
+}
 
 app.UseRouting();
 
