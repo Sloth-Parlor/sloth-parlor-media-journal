@@ -1,11 +1,14 @@
-﻿<!DOCTYPE html>
+﻿@inject IConfiguration Configuration
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <base href="/mj/" />
+    <base href="@BasePath" />
+    @* <base href="/mj/" /> *@
 
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="SlothParlor.MediaJounal.WebApp.styles.css" />
@@ -18,3 +21,7 @@
 </body>
 
 </html>
+
+@code {
+    private string BasePath => Configuration["BasePath"] ?? "/";
+}

@@ -67,6 +67,11 @@ builder.Services
 
 var app = builder.Build();
 
+if (app.Configuration["BasePath"] is string basePath && !string.IsNullOrWhiteSpace(basePath))
+{
+    app.UsePathBase(basePath);
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -80,11 +85,6 @@ else
 }
 
 app.UseHttpsRedirection();
-
-if (app.Configuration.GetValue<string?>("PathBase") is string pathBase && !string.IsNullOrWhiteSpace(pathBase))
-{
-    app.UsePathBase(pathBase);
-}
 
 app.UseRouting();
 
