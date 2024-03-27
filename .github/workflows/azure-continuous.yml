@@ -67,9 +67,14 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           scope: resourcegroup
-          resourceGroupName: 'rg-sp-useast2-mj-preprod'
-          template: main.pipeline.bicep
-          parameters: 'envName=staging appVnetName=sp-apps-vnet subnetName=sp-mj-staging-app-subnet'
+          resourceGroupName: '${{ env.TARGET_RESOURCE_GROUP }}'
+          template: main.incremental.bicep
+          parameters: >-
+            envName=staging
+            appNamePrefix=sp-mj
+            vnetResourceGroupName=${{ env.VNET_RESOURCE_GROUP }}
+            vnetName=${{ env.VNET_NAME }}
+            subnetName=${{ env.SUBNET_NAME }}'
           failOnStdErr: false
 
   deploy_app_staging:
@@ -99,9 +104,11 @@ jobs:
         id: deploy-webapp
         uses: azure/webapps-deploy@v2
         with:
-          resource-group-name: 'rg-sp-useast2-mj-preprod'
+          resource-group-name: '${{ env.TARGET_RESOURCE_GROUP }}'
           app-name: ${{ needs.deploy_infra_staging.outputs.webAppName }}
-          slot-name: 'Production' # Free/basic tiers only support "production" slot deployment
+          # Note: Free/basic tiers only support "production" slot deployment, 
+          # so the env var does value does not necessarily match the GitHub Actions Env name
+          slot-name: '${{ env.APP_SERVICES_DEPLOYMENT_SLOT }}' 
           package: .
 
       

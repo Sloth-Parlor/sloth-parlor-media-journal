@@ -4,7 +4,7 @@
 // Params
 // -------------
 
-param appNamePrefix string = 'sp-mj'
+param appNamePrefix string
 
 @allowed([
   'dev'
@@ -13,7 +13,9 @@ param appNamePrefix string = 'sp-mj'
 ])
 param envName string
 
-param appVnetName string
+param vnetResourceGroupName string = resourceGroup().name
+
+param vnetName string
 
 param subnetName string
 
@@ -22,14 +24,14 @@ param location string = resourceGroup().location
 // Existing resources
 // -------------
 
-resource appCommonRg 'Microsoft.Resources/resourceGroups@2023-07-01' existing = {
-  name: 'rg-sp-useast2-app-common-preprod'
+resource vnetResourceGroup 'Microsoft.Resources/resourceGroups@2023-07-01' existing = {
+  name: vnetResourceGroupName
   scope: subscription()
 }
 
 resource spAppsNetwork 'Microsoft.Network/virtualNetworks@2020-06-01' existing = {
-  name: appVnetName
-  scope: appCommonRg
+  name: vnetName
+  scope: vnetResourceGroup
 }
 
 resource appSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-09-01' existing = {

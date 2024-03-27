@@ -8,7 +8,7 @@ param location string = resourceGroup().location
 // Provisioned resources
 // -------------
 
-resource nonProd 'Microsoft.Web/serverfarms@2023-01-01' =
+resource nonProdPlan 'Microsoft.Web/serverfarms@2023-01-01' =
   if (!isProd) {
     name: 'nonprod-linux-webapp-plan'
     location: location
@@ -22,7 +22,7 @@ resource nonProd 'Microsoft.Web/serverfarms@2023-01-01' =
     }
   }
 
-resource webAppPlans 'Microsoft.Web/serverfarms@2023-01-01' =
+resource prodPlan 'Microsoft.Web/serverfarms@2023-01-01' =
   if (isProd) {
     name: 'prod-linux-webapp-plan'
     location: location
