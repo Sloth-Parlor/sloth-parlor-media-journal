@@ -53,3 +53,4 @@ module webapp './modules/webapp.bicep' = {
 }
 
 output webAppName string = webapp.outputs.webAppName
+output appSubnetId string = appSubnet.id
