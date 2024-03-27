@@ -1,13 +1,15 @@
 /* Provisions resources that are expected to be part
  * of the environment but not managed incrementally.
+ * 
  * This can be considered a kind of living documentation. 
+ * 
  * It's acceptable to bootstrap an environemnt and then modify 
  * these resources manually. */
 
 // Params
 // -------------
 
-param appNamePrefix string = 'sp-mj'
+param appNamePrefix string
 
 @allowed([
   'lab'
@@ -17,7 +19,9 @@ param appNamePrefix string = 'sp-mj'
 ])
 param envName string
 
-param appVnetName string
+param vnetResourceGroupName string = resourceGroup().name
+
+param vnetName string
 
 param subnetAddressPrefix string
 
@@ -25,8 +29,9 @@ param location string = resourceGroup().location
 
 // Existing resources
 // -------------
-resource appCommonRg 'Microsoft.Resources/resourceGroups@2023-07-01' existing = {
-  name: 'rg-sp-useast2-app-common-preprod'
+
+resource vnetRg 'Microsoft.Resources/resourceGroups@2023-07-01' existing = {
+  name: vnetResourceGroupName
   scope: subscription()
 }
 
@@ -35,9 +40,9 @@ resource appCommonRg 'Microsoft.Resources/resourceGroups@2023-07-01' existing = 
 
 module appSubnet 'modules/app-subnet.bicep' = {
   name: 'appSubnet'
-  scope: appCommonRg
+  scope: vnetRg
   params: {
-    appVnetName: appVnetName
+    appVnetName: vnetName
     subnetName: '${appNamePrefix}-${envName}-app-subnet'
     addressPrefix: subnetAddressPrefix
   }
