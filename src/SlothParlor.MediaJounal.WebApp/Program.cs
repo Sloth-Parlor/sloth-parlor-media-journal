@@ -1,9 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Text.Json;
 using Azure.Identity;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
@@ -79,30 +75,6 @@ builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration,
         .AddDownstreamApi("MicrosoftGraphApi", msGraphConfigSection)
         .AddInMemoryTokenCaches();
 
-builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
-{
-    var redirectToIdentityProvider = options.Events.OnRedirectToIdentityProvider;
-
-    options.Events.OnRedirectToIdentityProvider = async context =>
-    {
-        var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
-
-        await redirectToIdentityProvider(context);
-
-        var protocolMessageData = new
-        {
-            context.ProtocolMessage.DomainHint,
-            context.ProtocolMessage.IdentityProvider,
-            context.ProtocolMessage.IssuerAddress,
-            context.ProtocolMessage.LoginHint,
-            context.ProtocolMessage.RedirectUri,
-        };
-
-        var protocolMessageDataJson = JsonSerializer.Serialize(protocolMessageData, options: new() { WriteIndented = true });
-        logger.LogInformation("OpenIdConnect redirect message data (json):\n{Json}", protocolMessageDataJson);
-    };
-});
-
 // Configure webapp services
 builder.Services
     .AddRazorPages()
@@ -118,24 +90,6 @@ builder.Services
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
-{
-    var requestData = new
-    {
-        context.Request.IsHttps,
-        context.Request.Scheme, 
-        context.Request.Host,
-        context.Request.Path,
-        context.Request.PathBase,
-        context.Request.Headers,
-    };
-
-    var requestDataJson = JsonSerializer.Serialize(requestData, options: new() { WriteIndented = true });
-    app.Logger.LogDebug("initial request data (json):\n{Json}", requestDataJson);
-
-    await next();
-});
-
 if (builder.Configuration.GetValue<bool>("UseForwardedHeaders"))
 {
     app.UseForwardedHeaders();
@@ -146,24 +100,6 @@ if (app.Configuration["BasePath"] is string basePath && !string.IsNullOrWhiteSpa
     app.UsePathBase(basePath);
 }
 
-app.Use(async (context, next) =>
-{
-    var requestData = new
-    {
-        context.Request.IsHttps,
-        context.Request.Scheme,
-        context.Request.Host,
-        context.Request.Path,
-        context.Request.PathBase,
-        context.Request.Headers,
-        Middleware = new string[] { "UseForwardedHeaders", "UsePathBase" },
-    };
-
-    var requestDataJson = JsonSerializer.Serialize(requestData, options: new() { WriteIndented = true });
-    app.Logger.LogDebug("modified request data (json):\n{Json}", requestDataJson);
-
-    await next();
-});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
