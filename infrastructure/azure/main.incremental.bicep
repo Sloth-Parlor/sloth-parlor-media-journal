@@ -13,7 +13,7 @@ param appNamePrefix string
 ])
 param envName string
 
-param vnetResourceGroupName string = resourceGroup().name
+param vnetResourceGroupName string
 
 param vnetName string
 

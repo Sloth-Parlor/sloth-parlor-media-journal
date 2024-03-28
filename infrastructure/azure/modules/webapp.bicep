@@ -54,6 +54,7 @@ resource webapp 'Microsoft.Web/sites@2023-01-01' = {
     publicNetworkAccess: 'Enabled'
     reserved: true // must be true when the app kind is linux
     serverFarmId: appServicePlan.id
+    virtualNetworkSubnetId: appResourcesSubnetId
     siteConfig: {
       alwaysOn: alwaysOn
       linuxFxVersion: 'DOTNETCORE|8.0'
@@ -77,11 +78,12 @@ resource webapp 'Microsoft.Web/sites@2023-01-01' = {
   }
 }
 
-resource vnetIntegration 'Microsoft.Web/sites/networkConfig@2021-01-01' = {
-  name: 'virtualNetwork'
+resource vnetConnection 'Microsoft.Web/sites/virtualNetworkConnections@2023-01-01' = {
+  name: 'sp-mj-staging-webapp-subnet-connection'
   parent: webapp
   properties: {
-    subnetResourceId: appResourcesSubnetId
+    vnetResourceId: appResourcesSubnetId
+    isSwift: true
   }
 }
 
