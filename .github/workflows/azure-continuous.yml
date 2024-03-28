@@ -49,6 +49,7 @@ jobs:
       name: 'Staging'
     outputs:
       webAppName: ${{ steps.deploy-infrastructure.outputs.webAppName }}
+      appSubnetId: ${{ steps.deploy-infrastructure.outputs.appSubnetId }}
     steps:
       - name: Login to Azure
         uses: azure/login@v1
@@ -67,14 +68,15 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           scope: resourcegroup
-          resourceGroupName: '${{ vars.TARGET_RESOURCE_GROUP }}'
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ vars.TARGET_RESOURCE_GROUP }}
           template: main.incremental.bicep
           parameters: >-
             envName=staging
             appNamePrefix=sp-mj
             vnetResourceGroupName=${{ vars.VNET_RESOURCE_GROUP }}
             vnetName=${{ vars.VNET_NAME }}
-            subnetName=${{ vars.SUBNET_NAME }}'
+            subnetName=${{ vars.SUBNET_NAME }}
           failOnStdErr: false
 
   deploy_app_staging:
