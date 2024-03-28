@@ -3,7 +3,7 @@ using Azure.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
-using SlothParlor.MediaJounal.WebApp.Components;
+using SlothParlor.MediaJournal.WebApp.Components;
 
 // Must be set before OpenIdConnectOptions are configured
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
@@ -128,6 +128,6 @@ app.MapRazorPages();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(SlothParlor.MediaJounal.WebApp.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(SlothParlor.MediaJournal.WebApp.Client._Imports).Assembly);
 
 app.Run();
