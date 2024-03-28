@@ -1,4 +1,4 @@
-﻿@inject IConfiguration Configuration
+﻿@inject NavigationManager Navigation
 
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <base href="@BasePath" />
-    @* <base href="/mj/" /> *@
 
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="SlothParlor.MediaJournal.WebApp.styles.css" />
@@ -23,5 +22,5 @@
 </html>
 
 @code {
-    private string BasePath => Configuration["BasePath"] ?? "/";
+    private string BasePath => new Uri(Navigation.BaseUri).AbsolutePath;
 }
