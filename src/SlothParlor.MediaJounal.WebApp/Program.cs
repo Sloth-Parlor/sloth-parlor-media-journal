@@ -11,7 +11,7 @@ JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 var builder = WebApplication.CreateBuilder(args);
 
 var applicationOrigins = builder.Configuration
-    .GetSection("Cors:ApplicationOrigins")
+    .GetSection("HttpHost:Origins:ApplicationOrigins")
     .Get<string[]>() ?? [];
 
 if (applicationOrigins.Length == 0)
@@ -33,7 +33,7 @@ builder.Services.AddCors(options =>
 
     trustedOrigins.AddRange(applicationOrigins);
     trustedOrigins.AddRange(builder.Configuration
-        .GetSection("Cors:IdentityOrigins")
+        .GetSection("HttpHost:Origins:IdentityOrigins")
         .Get<string[]>() ?? []);
 
     options.AddDefaultPolicy(policyBuilder =>
@@ -46,7 +46,7 @@ builder.Services.AddCors(options =>
 });
 
 // Configure proxy
-if (builder.Configuration.GetValue<bool>("UseForwardedHeaders"))
+if (builder.Configuration.GetValue<bool>("HttpHost:UseForwardedHeaders"))
 {
     builder.Services.Configure<ForwardedHeadersOptions>(options =>
     {
@@ -90,12 +90,12 @@ builder.Services
 
 var app = builder.Build();
 
-if (builder.Configuration.GetValue<bool>("UseForwardedHeaders"))
+if (builder.Configuration.GetValue<bool>("HttpHost:UseForwardedHeaders"))
 {
     app.UseForwardedHeaders();
 }
 
-if (app.Configuration["BasePath"] is string basePath && !string.IsNullOrWhiteSpace(basePath))
+if (builder.Configuration["HttpHost:BasePath"] is string basePath && !string.IsNullOrWhiteSpace(basePath))
 {
     app.UsePathBase(basePath);
 }
