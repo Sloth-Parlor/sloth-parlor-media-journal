@@ -10,6 +10,13 @@ JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Additional configuration sources
+if (builder.Configuration.GetValue<Uri>("AzureKeyVault:Uri") is Uri keyVaultUri)
+{
+    builder.Configuration
+        .AddAzureKeyVault(keyVaultUri, new DefaultAzureCredential());
+}
+
 var applicationOrigins = builder.Configuration
     .GetSection("HttpHost:Origins:ApplicationOrigins")
     .Get<string[]>() ?? [];
@@ -17,13 +24,6 @@ var applicationOrigins = builder.Configuration
 if (applicationOrigins.Length == 0)
 {
     throw new ArgumentException("ApplicationOrigins must be set in the configuration.", nameof(applicationOrigins));
-}
-
-// Additional configuration sources
-if (builder.Configuration.GetValue<Uri>("AzureKeyVault:Uri") is Uri keyVaultUri)
-{
-    builder.Configuration
-        .AddAzureKeyVault(keyVaultUri, new DefaultAzureCredential());
 }
 
 // Configure CORS

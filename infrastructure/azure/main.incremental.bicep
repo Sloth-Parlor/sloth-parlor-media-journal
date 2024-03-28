@@ -21,6 +21,11 @@ param subnetName string
 
 param location string = resourceGroup().location
 
+// Common variables
+// -------------
+
+var envQualified = '${appNamePrefix}-${envName}'
+
 // Existing resources
 // -------------
 
@@ -39,6 +44,10 @@ resource appSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-09-01' existi
   parent: spAppsNetwork
 }
 
+resource appKeyVault 'Microsoft.KeyVault/vaults@2023-07-01' existing = {
+  name: '${envQualified}-kv'
+}
+
 // Provisioned resources
 // -------------
 
@@ -47,6 +56,7 @@ module webapp './modules/webapp.bicep' = {
   params: {
     appNamePrefix: appNamePrefix
     appResourcesSubnetId: appSubnet.id
+    keyvaultUri: appKeyVault.properties.vaultUri
     environment: envName
     location: location
   }

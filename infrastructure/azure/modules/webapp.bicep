@@ -16,6 +16,8 @@ param environment string
 
 param location string = resourceGroup().location
 
+param keyvaultUri string
+
 param appResourcesSubnetId string
 
 param enabled bool = true
@@ -69,6 +71,10 @@ resource webapp 'Microsoft.Web/sites@2023-01-01' = {
         {
           name: 'ASPNETCORE_ENVIRONMENT'
           value: aspNetCoreEnv
+        }
+        {
+          name: 'ASPNETCORE_AZUREKEYVAULT__URI'
+          value: keyvaultUri
         }
       ]
     }
