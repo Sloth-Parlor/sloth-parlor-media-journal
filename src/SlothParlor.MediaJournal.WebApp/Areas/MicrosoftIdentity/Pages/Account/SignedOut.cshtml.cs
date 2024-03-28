@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace SlothParlor.MediaJounal.WebApp.Areas.MicrosoftIdentity.Pages.Account;
+namespace SlothParlor.MediaJournal.WebApp.Areas.MicrosoftIdentity.Pages.Account;
 
 public class IndexModel : PageModel
 {
