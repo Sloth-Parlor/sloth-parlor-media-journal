@@ -27,3 +27,4 @@ EOF
 
 psql --username=$user --dbname=$db \
      --command="ALTER USER appuser WITH PASSWORD '$APPUSER_PASSWORD'"
+
