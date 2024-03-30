@@ -1,9 +1,11 @@
-
 .vs/
+.mono/
+
+# dotnet build output
 **/bin/
 **/obj/
 
+# User/secrets files
 *.user
 **/params/**/*.user.bicepparam
-
-.mono
+secrets.env

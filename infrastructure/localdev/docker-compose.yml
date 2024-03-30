@@ -1,0 +1,17 @@
+version: '3.8'
+name: sp-mj-local
+services:
+  db:
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+      - secrets.env
+    volumes:
+      - sp_mj_postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  sp_mj_postgres_data:
