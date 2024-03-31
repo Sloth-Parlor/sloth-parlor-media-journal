@@ -29,8 +29,7 @@ jobs:
 
       - uses: ./.github/actions/build-media-journal
         with:
-          dataProject: ${{ github.workspace }}/src/SlothParlor.MediaJournal.Data/
-          webAppProject:  ${{ github.workspace }}/src/SlothParlor.MediaJournal.WebApp/
+          solutionRoot: ${{ github.workspace }}
           outputDirectory: ${{ env.DOTNET_ROOT }}/mj-webapp
 
   deploy_infra_staging:
