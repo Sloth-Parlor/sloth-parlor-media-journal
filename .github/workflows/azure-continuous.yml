@@ -19,23 +19,19 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
+      
+      - name: Install tools
+        run: |
+          dotnet tool install dotnet-ef --local --create-manifest-if-needed
 
-      - uses: ./.github/actions/build-webapp
+      - name: Restore dependencies
+        run: dotnet restore
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/mj-webapp
-
-      - name: Upload app artifact(s)
-        uses: actions/upload-artifact@v4
+      - uses: ./.github/actions/build-media-journal
         with:
-          name: mj-webapp
-          path: ${{env.DOTNET_ROOT}}/mj-webapp
-
-      - name: Upload infrastructure declarations as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: infra
-          path: ./infrastructure/azure
+          dataProject: ${{ github.workspace }}/src/SlothParlor.MediaJournal.Data/
+          webAppProject:  ${{ github.workspace }}/src/SlothParlor.MediaJournal.WebApp/
+          outputDirectory: ${{ env.DOTNET_ROOT }}/mj-webapp
 
   deploy_infra_staging:
     name: "Update Infrastructure in Staging"
@@ -61,7 +57,7 @@ jobs:
       - name: Download infrastructure artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: infra
+          name: mj-webapp-infrastructure
 
       - name: Deploy Bicep file
         id: deploy-infrastructure
@@ -90,6 +86,11 @@ jobs:
     environment:
       name: 'Staging'
     steps:
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -102,14 +103,19 @@ jobs:
         with:
           name: mj-webapp
 
+      - name: Migrate Application Database
+        run: |
+          mj-webapp/migrationBundle.exe \
+            --connection-string ${{ secrets.APP_DB_CONNECTION_STRING }}
+
       - name: Deploy to Azure Web App
         id: deploy-webapp
         uses: azure/webapps-deploy@v2
         with:
           resource-group-name: '${{ vars.TARGET_RESOURCE_GROUP }}'
           app-name: ${{ needs.deploy_infra_staging.outputs.webAppName }}
-          # Note: Free/basic tiers only support "production" slot deployment, 
-          # so the env var does value does not necessarily match the GitHub Actions Env name
+          # Note: Free/basic tiers only support "production" slot deployment, so the 
+          # env var does value does not necessarily match theGitHub Actions Env name
           slot-name: '${{ vars.APP_SERVICES_DEPLOYMENT_SLOT }}' 
           package: .
 
