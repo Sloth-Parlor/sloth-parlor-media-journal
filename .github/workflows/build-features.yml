@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - feature/*
-  push:
-    branches:
-      - feature/*
 
 jobs:
   # @todo: Add infrastructure verification
@@ -23,4 +20,7 @@ jobs:
         with:
           dotnet-version: "8.x"
 
-      - uses: ./.github/actions/build-webapp
+      - uses: ./.github/actions/build-media-journal
+        with:
+          solutionRoot: ${{ github.workspace }}
+          outputDirectory: ${{ env.DOTNET_ROOT }}/mj-webapp

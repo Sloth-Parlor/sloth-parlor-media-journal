@@ -1,0 +1,59 @@
+name: Test DB Migrations
+
+on:
+  push:
+    branches:
+      - feature/add-db.jm
+    
+jobs:
+
+  build:
+    name: Test DB migrations (initial create)
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+      
+      - name: Install tools
+        run: |
+          dotnet tool install dotnet-ef --local --create-manifest-if-needed
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - uses: ./.github/actions/build-media-journal
+        with:
+          solutionRoot: ${{ github.workspace }}
+          outputDirectory: ${{ env.DOTNET_ROOT }}/mj-webapp
+
+  deploy_app_staging:
+    name: "Migrate DB"
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    needs: 
+      - build
+    environment:
+      name: FeatureDbMigrations
+    steps:
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: mj-webapp
+
+      - name: Migrate Application Database
+        run: |
+          mj-webapp/migrationBundle.exe \
+            --connection-string ${{ secrets.APP_DB_CONNECTION_STRING }}

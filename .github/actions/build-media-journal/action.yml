@@ -6,11 +6,8 @@ inputs:
   outputDirectory:
     description: 'The output directory for the dotnet publish command'
     required: true
-  dataProject:
-    description: 'Path to the EFCore project'
-    required: true
-  webAppProject:
-    description: 'Path to the startup project'
+  solutionRoot:
+    description: 'The root directory of the solution'
     required: true
   
 runs:
@@ -20,28 +17,21 @@ runs:
       run: dotnet build --configuration Release
       shell: bash
 
-    - name: Ensure All Model Changes Have Migrations
-      run: | 
-        dotnet ef migrations has-pending-model-changes \
-          --configuration Release --no-build \
-          --project ${{ inputs.dataProject }} \
-          --startup-project ${{ inputs.webAppProject }}
-      shell: bash
-
     - name: Publish Media Journal WebApp
       run: |
         dotnet publish \
-          --configuration Release 
-          --project ${{ inputs.webAppProject }} \
-          --output ${{ inputs.outputDirectory }}
+          --configuration Release \
+          --no-build --no-restore \
+          --output ${{ inputs.outputDirectory }} \
+          ${{ inputs.solutionRoot }}/src/SlothParlor.MediaJournal.WebApp/
       shell: bash
 
     - name: Bundle EF Migrations
       run: | 
         dotnet ef migrations bundle \
           --configuration Release --no-build \
-          --project ${{ inputs.dataProject }} \
-          --startup-project ${{ inputs.webAppProject }} \
+          --project ${{ inputs.solutionRoot }}/src/SlothParlor.MediaJournal.Data/ \
+          --startup-project ${{ inputs.solutionRoot }}/src/SlothParlor.MediaJournal.WebApp/ \
           --output ${{ inputs.outputDirectory }}/migrationBundle.exe
       shell: bash
     
