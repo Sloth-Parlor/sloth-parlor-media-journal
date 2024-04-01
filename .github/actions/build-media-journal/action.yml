@@ -28,11 +28,11 @@ runs:
 
     - name: Bundle EF Migrations
       run: | 
-        dotnet ef migrations bundle \
+        dotnet ef migrations bundle -v \
           --configuration Release --no-build \
           --project ${{ inputs.solutionRoot }}/src/SlothParlor.MediaJournal.Data/ \
-          --startup-project ${{ inputs.solutionRoot }}/src/SlothParlor.MediaJournal.WebApp/ \
-          --output ${{ inputs.outputDirectory }}/migrationBundle.exe
+          --output ${{ inputs.outputDirectory }}/efbundle.exe \
+          -- --no-connect 
       shell: bash
     
     - name: Upload App Artifact(s)

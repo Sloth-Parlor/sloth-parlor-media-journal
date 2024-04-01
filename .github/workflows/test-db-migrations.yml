@@ -34,10 +34,8 @@ jobs:
 
   deploy_app_staging:
     name: "Migrate DB"
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
     needs: 
       - build
     environment:
@@ -55,5 +53,6 @@ jobs:
 
       - name: Migrate Application Database
         run: |
-          mj-webapp/migrationBundle.exe \
-            --connection-string ${{ secrets.APP_DB_CONNECTION_STRING }}
+          chmod +x ./efbundle.exe
+          ./efbundle.exe -v --connection "${{ secrets.APP_DB_CONNECTION_STRING }}"
+

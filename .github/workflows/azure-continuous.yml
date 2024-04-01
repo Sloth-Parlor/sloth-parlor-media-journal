@@ -98,14 +98,15 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Download artifact from build job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@
         with:
           name: mj-webapp
 
+      - name: Make bundle executable
+        run: chmod +x ./efbundle.exe
+
       - name: Migrate Application Database
-        run: |
-          mj-webapp/migrationBundle.exe \
-            --connection-string ${{ secrets.APP_DB_CONNECTION_STRING }}
+        run: ./efbundle.exe --connection-string ${{ secrets.APP_DB_CONNECTION_STRING }}
 
       - name: Deploy to Azure Web App
         id: deploy-webapp
