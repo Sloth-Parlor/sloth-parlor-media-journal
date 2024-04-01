@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJournal.We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJournal.WebApp.Client", "src\SlothParlor.MediaJournal.WebApp.Client\SlothParlor.MediaJournal.WebApp.Client.csproj", "{A313E1E9-939C-4D13-A758-11CE50C8A35F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlothParlor.MediaJournal.Data", "src\SlothParlor.MediaJournal.Data\SlothParlor.MediaJournal.Data.csproj", "{0A61F184-FD52-4B4C-8720-1312AA57D7D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJournal.Data", "src\SlothParlor.MediaJournal.Data\SlothParlor.MediaJournal.Data.csproj", "{0A61F184-FD52-4B4C-8720-1312AA57D7D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlothParlor.MediaJournal.Core", "src\SlothParlor.MediaJournal.Core\SlothParlor.MediaJournal.Core.csproj", "{F3B396DE-70FB-4AC1-B499-F35452BBDE11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{0A61F184-FD52-4B4C-8720-1312AA57D7D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A61F184-FD52-4B4C-8720-1312AA57D7D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A61F184-FD52-4B4C-8720-1312AA57D7D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3B396DE-70FB-4AC1-B499-F35452BBDE11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3B396DE-70FB-4AC1-B499-F35452BBDE11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3B396DE-70FB-4AC1-B499-F35452BBDE11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3B396DE-70FB-4AC1-B499-F35452BBDE11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +43,7 @@ Global
 		{5768DC3E-914A-4EBC-985A-7F823D15A3C9} = {14CFEF01-8518-4A98-B20A-9B65D4A9B61E}
 		{A313E1E9-939C-4D13-A758-11CE50C8A35F} = {14CFEF01-8518-4A98-B20A-9B65D4A9B61E}
 		{0A61F184-FD52-4B4C-8720-1312AA57D7D8} = {14CFEF01-8518-4A98-B20A-9B65D4A9B61E}
+		{F3B396DE-70FB-4AC1-B499-F35452BBDE11} = {14CFEF01-8518-4A98-B20A-9B65D4A9B61E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {07500DFE-3B98-4A06-AFF0-CA48D4CCD4CF}
