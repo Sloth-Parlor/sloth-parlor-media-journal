@@ -1,11 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using Azure.Identity;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using SlothParlor.MediaJournal.Core.Extensions;
 using SlothParlor.MediaJournal.WebApp.Components;
-using AppConstants = SlothParlor.MediaJournal.WebApp.Constants;
 
 // Must be set before OpenIdConnectOptions are configured
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
@@ -90,20 +89,7 @@ builder.Services.AddRazorComponents()
 builder.Services
     .AddCascadingAuthenticationState();
 
-var appDbConnectionString = builder.Configuration.GetConnectionString(AppConstants.AppDbConnectionStringKey);
-ArgumentException.ThrowIfNullOrWhiteSpace(appDbConnectionString);
-
-builder.Services.AddDbContext<MediaJournalDbContext>(options =>
-{
-    options.UseNpgsql(appDbConnectionString);
-
-    if (builder.Environment.IsDevelopment())
-    {
-        options
-            .EnableDetailedErrors()
-            .EnableSensitiveDataLogging();
-    }
-});
+builder.Services.AddMediaJournalCore();
 
 var app = builder.Build();
 
@@ -138,6 +124,7 @@ app.UseAntiforgery();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMediaJournalUserData();
 
 app.MapControllers();
 app.MapRazorPages();
