@@ -6,15 +6,11 @@ namespace SlothParlor.MediaJournal.Data.Models;
 [Table(nameof(User), Schema = Constants.Schema.Users)]
 public class User
 {
-    [Key]
-    public int UserId { get; set; }
-
     [Required]
-    public required string Provider { get; set; }
-
-    [Required]
-    public required string ObjectId { get; set; }
+    public required string UserId { get; set; }
 
     [Required]
     public required string Email { get; set; }
+
+    
 }

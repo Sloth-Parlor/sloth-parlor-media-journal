@@ -7,9 +7,9 @@ public class WatchGroupParticipant
     [Key]
     public int ParticipantId { get; set; }
 
-    public int UserId { get; set; }
-
     public int WatchGroupId { get; set; }
+
+    public required string UserId { get; set; }
 
     [Required]
     [MaxLength(256)]

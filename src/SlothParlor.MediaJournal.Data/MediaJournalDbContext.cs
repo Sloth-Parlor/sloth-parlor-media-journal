@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SlothParlor.MediaJournal.Data;
 using SlothParlor.MediaJournal.Data.Models;
+
+namespace SlothParlor.MediaJournal.Data;
 
 public class MediaJournalDbContext : DbContext
 {
