@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using SlothParlor.MediaJournal.Data;
 
 #nullable disable
 
@@ -90,21 +91,10 @@ namespace SlothParlor.MediaJournal.Data.Migrations
 
             modelBuilder.Entity("SlothParlor.MediaJournal.Data.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ObjectId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Provider")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -144,8 +134,9 @@ namespace SlothParlor.MediaJournal.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("WatchGroupId")
                         .HasColumnType("integer");
@@ -161,8 +152,8 @@ namespace SlothParlor.MediaJournal.Data.Migrations
 
             modelBuilder.Entity("UserWatchGroup", b =>
                 {
-                    b.Property<int>("OwnersUserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("OwnersUserId")
+                        .HasColumnType("text");
 
                     b.Property<int>("WatchGroupId")
                         .HasColumnType("integer");

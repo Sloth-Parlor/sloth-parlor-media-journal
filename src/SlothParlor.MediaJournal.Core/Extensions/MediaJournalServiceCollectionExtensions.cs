@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using SlothParlor.MediaJournal.Core.JournalUser;
+using SlothParlor.MediaJournal.Core.Application;
+using SlothParlor.MediaJournal.Core.Journal;
+using SlothParlor.MediaJournal.Data;
 using SlothParlor.MediaJournal.WebApp;
 
 namespace SlothParlor.MediaJournal.Core.Extensions;
@@ -27,7 +29,15 @@ public static class MediaJournalServiceCollectionExtensions
             }
         });
 
-        serviceCollection.AddScoped<IUserService, UserService>();
+        serviceCollection.AddScoped<IAppUserProvider, AppUserProvider>();
+        serviceCollection.AddScoped<IAppUserManager, AppUserManager>();
+        serviceCollection.AddScoped<IUserJournalRepository, UserJournalRepository>((services) => 
+        {
+            var userProvider = services.GetRequiredService<IAppUserProvider>();
+
+            return ActivatorUtilities.CreateInstance<UserJournalRepository>(
+                services, userProvider.CurrentUserId);
+        });
 
         return serviceCollection;
     }

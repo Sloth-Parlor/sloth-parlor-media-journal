@@ -15,8 +15,6 @@ internal class DesignTimeMediaJournalDbContextFactory
             .Split(Environment.CommandLine)
             .ToArray();
 
-        DebugInfoToConsole(designTimeToolArgs, args);
-
         var optionsBuilder = new DbContextOptionsBuilder<MediaJournalDbContext>();
 
         if (!IsConnectionExpected(designTimeToolArgs, args))
@@ -41,7 +39,6 @@ internal class DesignTimeMediaJournalDbContextFactory
             ArgumentNullException.ThrowIfNull(connectionStringFromConfiguration);
         }
 
-        Console.WriteLine(JsonSerializer.Serialize(new { connectionStringFromConfiguration }, options: new() { WriteIndented = true }));
         optionsBuilder.UseNpgsql(connectionStringFromConfiguration);
 
         return new MediaJournalDbContext(optionsBuilder.Options);
@@ -81,30 +78,6 @@ internal class DesignTimeMediaJournalDbContextFactory
         }
 
         return false;
-    }
-
-    private static void DebugInfoToConsole(
-        string[] designTimeToolArgs, 
-        string[] args)
-    {
-        Console.WriteLine("----");
-        Console.WriteLine(JsonSerializer.Serialize(new
-        {
-            EnvironmentVariables = new
-            {
-                PgParams = new Dictionary<string, object?>()
-                {
-                    [PgEnvVars.Host] = Environment.GetEnvironmentVariable(PgEnvVars.Host),
-                    [PgEnvVars.Database] = Environment.GetEnvironmentVariable(PgEnvVars.Database),
-                    [PgEnvVars.User] = Environment.GetEnvironmentVariable(PgEnvVars.User),
-                },
-                PasswordEnvVarIsSet = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(PgEnvVars.Password)),
-            },
-            Environment.CommandLine,
-            designTimeToolArgs,
-            LocalArgs = args,
-        }, options: new() { WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
-        Console.WriteLine("----");
     }
 
     public static IConfiguration BuildConfiguration(string[] args)

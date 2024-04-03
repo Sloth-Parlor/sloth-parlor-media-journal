@@ -22,10 +22,7 @@ namespace SlothParlor.MediaJournal.Data.Migrations
                 schema: "Users",
                 columns: table => new
                 {
-                    UserId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Provider = table.Column<string>(type: "text", nullable: false),
-                    ObjectId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -74,7 +71,7 @@ namespace SlothParlor.MediaJournal.Data.Migrations
                 schema: "MediaJournal",
                 columns: table => new
                 {
-                    OwnersUserId = table.Column<int>(type: "integer", nullable: false),
+                    OwnersUserId = table.Column<string>(type: "text", nullable: false),
                     WatchGroupId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -103,8 +100,8 @@ namespace SlothParlor.MediaJournal.Data.Migrations
                 {
                     ParticipantId = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
                     WatchGroupId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
                     DisplayName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
                 },
                 constraints: table =>

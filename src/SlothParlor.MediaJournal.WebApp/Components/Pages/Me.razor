@@ -1,29 +1,79 @@
 ﻿@page "/me"
 
 @using System.Text.Json
+@using System.Security.Claims
+@using System.Text.Json.Serialization
 
-<AuthorizeView>
-    <Authorized>
-        <h3>@context.User.Identity?.Name!</h3>
-        <pre>
-            @(JsonSerializer.Serialize(
-                context.User.Claims
-                    .GroupBy(c => c.Issuer)
-                    .Select(c => new 
-                    { 
-                        Issuer = c.Key,
-                        Claims = c.Select(c => new { c.Type, c.Value }),
-                    }), 
-                options: new() 
-                { 
-                    WriteIndented = true,
-                }))
-        </pre>
-    </Authorized>
-    <NotAuthorized>
-        Not signed in.
-    </NotAuthorized>
-</AuthorizeView>
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IUserJournalRepository UserJournalRepository
+
+
+<pre>@RawDataJson</pre>
 
 @code {
+    private bool IsAuthenticated { get; set; } = false;
+    private object? RawData { get; set; }
+
+    private string RawDataJson => JsonSerializer.Serialize(
+        RawData, 
+        options: new() 
+        {   
+            WriteIndented = true, 
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+        });
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        await UpdateRawDataAsync(authState.User);
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> authStateTask)
+    {
+        var authState = await authStateTask;
+
+        await UpdateRawDataAsync(authState.User);
+
+        StateHasChanged();
+    }
+
+    private async Task UpdateRawDataAsync(ClaimsPrincipal user)
+    {
+        RawData = await CreatePayloadAsync(user);
+    }
+
+    private async Task<object> CreatePayloadAsync(ClaimsPrincipal user) => new
+    {
+        User = new 
+        {
+            Claims = CreateClaimsData(user.Claims),
+        },
+        App = new
+        {
+            UserWatchGroups = (await UserJournalRepository.GetWatchGroupsAsync())
+                .Select(wg => new { 
+                    wg.DisplayName, 
+                    ParticipantNames = wg.Participants.Select(p => new { p.DisplayName, p.User.Email }),
+                }),
+            UserMediaLogs = (await UserJournalRepository.GetMediaLogsAsync())
+                .Select(ml => new
+                {
+                    ml.DisplayName,
+                    ml.LogEntries,
+                }),
+        }
+    };
+
+    private object CreateClaimsData(IEnumerable<Claim> claims) => 
+        claims
+            .GroupBy(c => c.Issuer)
+            .Select(c => new 
+            { 
+                Issuer = c.Key,
+                Claims = c.Select(c => new { c.Type, c.Value }),
+            });
 }
