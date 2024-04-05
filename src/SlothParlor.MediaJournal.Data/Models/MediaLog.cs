@@ -13,7 +13,7 @@ public class MediaLog
     [MaxLength(512)]
     public required string DisplayName { get; set; }
 
-    public required IEnumerable<Entry> LogEntries { get; set; }
+    public virtual IEnumerable<Entry>? LogEntries { get; set; }
 
-    public required WatchGroup WatchGroup { get; set; }
+    public virtual WatchGroup? WatchGroup { get; set; }
 }

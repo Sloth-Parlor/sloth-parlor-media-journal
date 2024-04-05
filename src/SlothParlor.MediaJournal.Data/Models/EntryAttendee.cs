@@ -8,9 +8,11 @@ public class EntryAttendee
     [Key]
     public int EntryAttendeeId { get; set; }
 
+    public int ParticipantId { get; set; }
+
     public int EntryId { get; set; }
 
-    public required Entry Entry { get; set; }
+    public virtual Entry? Entry { get; set; }
 
-    public required WatchGroupParticipant Participant { get; set; }
+    public virtual WatchGroupParticipant? Participant { get; set; }
 }

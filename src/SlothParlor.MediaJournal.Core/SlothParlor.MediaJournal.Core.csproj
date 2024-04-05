@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SlothParlor.MediaJournal.Data\SlothParlor.MediaJournal.Data.csproj" />
+    <ProjectReference Include="..\SlothParlor.MediaJournal.Contracts\SlothParlor.MediaJournal.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
