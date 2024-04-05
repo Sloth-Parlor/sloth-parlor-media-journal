@@ -11,6 +11,4 @@ public class User
 
     [Required]
     public required string Email { get; set; }
-
-    
 }

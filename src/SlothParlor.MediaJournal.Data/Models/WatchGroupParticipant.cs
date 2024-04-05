@@ -15,7 +15,7 @@ public class WatchGroupParticipant
     [MaxLength(256)]
     public required string DisplayName { get; set; }
 
-    public required WatchGroup WatchGroup { get; set; }
+    public virtual WatchGroup? WatchGroup { get; set; }
 
-    public required User User { get; set; }
+    public virtual User? User { get; set; }
 }

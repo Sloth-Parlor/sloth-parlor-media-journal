@@ -11,9 +11,9 @@ public class WatchGroup
     [MaxLength(512)]
     public required string DisplayName { get; set; }
 
-    public ICollection<MediaLog> MediaLogs { get; set; } = [];
+    public virtual ICollection<MediaLog>? MediaLogs { get; set; }
 
-    public ICollection<WatchGroupParticipant> Participants { get; set; } = [];
+    public virtual ICollection<WatchGroupParticipant>? Participants { get; set; }
 
-    public ICollection<User> Owners { get; set; } = [];
+    public virtual ICollection<User>? Owners { get; set; }
 }
