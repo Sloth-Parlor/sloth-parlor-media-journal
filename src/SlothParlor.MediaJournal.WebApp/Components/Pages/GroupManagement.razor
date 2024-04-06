@@ -1,0 +1,27 @@
+﻿@page "/group"
+
+@using SlothParlor.MediaJournal.Contracts.WatchGroup
+
+<h3>Watch groups</h3>
+
+<EditForm Model="@WatchGroupFormData" OnValidSubmit="@HandleValidSubmit">
+
+    <label>Name</label>
+    <InputText id="Name" @bind-Value="WatchGroupFormData.DisplayName" />
+
+    <button type="submit">Save</button>
+</EditForm>
+
+@code {
+    private WatchGroupInput WatchGroupFormData { get; set; } = new WatchGroupInput();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.CompletedTask;
+    }
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("Form submitted");
+    }
+}

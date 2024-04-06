@@ -18,12 +18,12 @@ public class UserJournalRepository : IUserJournalRepository
         _watchGroups = dbContext.WatchGroups
             .Include(wg => wg.MediaLogs)
             .Include(wg => wg.Participants)
-            .Where(wg => wg.Participants
+            .Where(wg => wg.Participants!
                 .Any(p => _userParticipantShadowRecords
                     .Select(p => p.ParticipantId)
                     .Contains(p.ParticipantId)));
 
-        _mediaLogs = _watchGroups.SelectMany(wg => wg.MediaLogs);
+        _mediaLogs = _watchGroups.SelectMany(wg => wg.MediaLogs!);
     }
 
     public async Task<IEnumerable<WatchGroup>> GetWatchGroupsAsync()

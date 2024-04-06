@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using Azure.Identity;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
@@ -17,6 +19,13 @@ if (builder.Configuration.GetValue<Uri>("AzureKeyVault:Uri") is Uri keyVaultUri)
     builder.Configuration
         .AddAzureKeyVault(keyVaultUri, new DefaultAzureCredential());
 }
+
+// Configure logging
+var openTelemetry = builder.Services.AddOpenTelemetry();
+
+openTelemetry.UseAzureMonitor()
+    .WithTracing()
+    .WithMetrics();
 
 var applicationOrigins = builder.Configuration
     .GetSection("HttpHost:Origins:ApplicationOrigins")
