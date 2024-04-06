@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJournal.We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJournal.Data", "src\SlothParlor.MediaJournal.Data\SlothParlor.MediaJournal.Data.csproj", "{0A61F184-FD52-4B4C-8720-1312AA57D7D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlothParlor.MediaJournal.Core", "src\SlothParlor.MediaJournal.Core\SlothParlor.MediaJournal.Core.csproj", "{F3B396DE-70FB-4AC1-B499-F35452BBDE11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJournal.Core", "src\SlothParlor.MediaJournal.Core\SlothParlor.MediaJournal.Core.csproj", "{F3B396DE-70FB-4AC1-B499-F35452BBDE11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlothParlor.MediaJournal.Contracts", "src\SlothParlor.MediaJournal.Contracts\SlothParlor.MediaJournal.Contracts.csproj", "{C538BC78-BEDA-4826-9924-C162F990EB0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJournal.Contracts", "src\SlothParlor.MediaJournal.Contracts\SlothParlor.MediaJournal.Contracts.csproj", "{C538BC78-BEDA-4826-9924-C162F990EB0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
