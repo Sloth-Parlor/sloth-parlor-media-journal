@@ -1,31 +1,19 @@
-using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
-using Azure.Identity;
-using Azure.Monitor.OpenTelemetry.AspNetCore;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using SlothParlor.MediaJournal.Core.Extensions;
 using SlothParlor.MediaJournal.WebApp.Components;
+using SlothParlor.MediaJournal.WebApp.Extensions;
 
 // Must be set before OpenIdConnectOptions are configured
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Additional configuration sources
-if (builder.Configuration.GetValue<Uri>("AzureKeyVault:Uri") is Uri keyVaultUri)
-{
-    builder.Configuration
-        .AddAzureKeyVault(keyVaultUri, new DefaultAzureCredential());
-}
-
-// Configure logging
-var openTelemetry = builder.Services.AddOpenTelemetry();
-
-openTelemetry.UseAzureMonitor()
-    .WithTracing()
-    .WithMetrics();
+builder
+    .AddKeyVaultConfigSourceIfConfigured()
+    .AddAppMonitoringIfConfigured();
 
 var applicationOrigins = builder.Configuration
     .GetSection("HttpHost:Origins:ApplicationOrigins")
