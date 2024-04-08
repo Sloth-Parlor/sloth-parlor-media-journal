@@ -12,6 +12,16 @@ services:
       - sp_mj_postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  
+  monitoring:
+    build:
+      context: ./monitoring
+      dockerfile: Dockerfile
+    env_file:
+      .env
+    ports:
+      - 4317:18889
+      - 18888:18888
 
 volumes:
   sp_mj_postgres_data:
