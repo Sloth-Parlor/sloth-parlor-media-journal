@@ -1,27 +1,55 @@
-﻿@page "/group"
+﻿@page "/groups"
+@rendermode InteractiveServer
 
 @using SlothParlor.MediaJournal.Contracts.WatchGroup
+@using SlothParlor.MediaJournal.Core.Journal
+
+@inject IUserJournalRepository Journal
+@inject IWatchGroupManager WatchGroupManager
 
 <h3>Watch groups</h3>
 
-<EditForm Model="@WatchGroupFormData" OnValidSubmit="@HandleValidSubmit">
+<div>
+    <EditForm Model="@WatchGroupFormData" OnValidSubmit="@HandleValidSubmit">
 
-    <label>Name</label>
-    <InputText id="Name" @bind-Value="WatchGroupFormData.DisplayName" />
+        <label for="WatchGroupName">Group Name</label>
+        <InputText id="WatchGroupName" @bind-Value="WatchGroupFormData.DisplayName" />
 
-    <button type="submit">Save</button>
-</EditForm>
+        <button type="submit">Create</button>
+    </EditForm>
+</div>
+
+<div>
+    <ul>
+        @foreach(var group in watchGroups)
+        {
+            <li>@group.DisplayName</li>
+        }
+    </ul>
+</div>
 
 @code {
-    private WatchGroupInput WatchGroupFormData { get; set; } = new WatchGroupInput();
+    private List<WatchGroupResult> watchGroups = new List<WatchGroupResult>();
+
+    private WatchGroupProperties WatchGroupFormData { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.CompletedTask;
+        await RefreshWatchGroups();
     }
 
-    private void HandleValidSubmit()
+    private async Task HandleValidSubmit(EditContext context)
     {
-        Console.WriteLine("Form submitted");
+        var requestProperties = (WatchGroupProperties)context.Model;
+
+        var result = await WatchGroupManager.CreateEmptyWatchGroupAsync(requestProperties);
+
+        watchGroups.Add(result);
+    }
+
+    private async Task RefreshWatchGroups()
+    {
+        var data = await Journal.GetWatchGroupsAsync();
+        watchGroups = data.ToList();
     }
 }

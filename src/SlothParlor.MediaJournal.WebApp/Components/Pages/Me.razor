@@ -56,7 +56,7 @@
             UserWatchGroups = (await UserJournalRepository.GetWatchGroupsAsync())
                 .Select(wg => new { 
                     wg.DisplayName, 
-                    ParticipantNames = wg.Participants?.Select(p => new { p.DisplayName, p.User?.Email }),
+                    ParticipantNames = wg.Participants?.Select(p => new { p.DisplayName }),
                 }),
             UserMediaLogs = (await UserJournalRepository.GetMediaLogsAsync())
                 .Select(ml => new
