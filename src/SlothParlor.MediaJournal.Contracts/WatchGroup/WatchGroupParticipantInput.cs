@@ -1,11 +1,6 @@
-namespace SlothParlor.MediaJournal.Contracts.WatchGroup
+namespace SlothParlor.MediaJournal.Contracts.WatchGroup;
+
+public class WatchGroupParticipantInput 
 {
-    public record WatchGroupParticipantInput
-    {
-        public string UserId { get; init; }
 
-        public int WatchGroupId { get; init; }
-
-        public string DisplayName { get; init; }
-    }
 }

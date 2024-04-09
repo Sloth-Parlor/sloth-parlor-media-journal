@@ -1,4 +1,6 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using SlothParlor.MediaJournal.Contracts.WatchGroup;
 using SlothParlor.MediaJournal.Data;
 using SlothParlor.MediaJournal.Data.Models;
 
@@ -9,9 +11,12 @@ public class UserJournalRepository : IUserJournalRepository
     private readonly IQueryable<WatchGroupParticipant> _userParticipantShadowRecords;
     private readonly IQueryable<WatchGroup> _watchGroups;
     private readonly IQueryable<MediaLog> _mediaLogs;
-    
-    public UserJournalRepository(MediaJournalDbContext dbContext, string userId)
+    private readonly IMapper _mapper;
+
+    public UserJournalRepository(MediaJournalDbContext dbContext, IMapper mapper, string userId)
     {
+        _mapper = mapper;
+
         _userParticipantShadowRecords = dbContext.WatchGroupParticipants
             .Where(wgp => wgp.UserId == userId);
 
@@ -26,9 +31,11 @@ public class UserJournalRepository : IUserJournalRepository
         _mediaLogs = _watchGroups.SelectMany(wg => wg.MediaLogs!);
     }
 
-    public async Task<IEnumerable<WatchGroup>> GetWatchGroupsAsync()
+    public async Task<IEnumerable<WatchGroupResult>> GetWatchGroupsAsync()
     {
-        return await _watchGroups.ToListAsync();
+        var watchGroups = await _watchGroups.ToListAsync();
+
+        return watchGroups.Select(_mapper.Map<WatchGroupResult>);
     }
 
     public async Task<IEnumerable<MediaLog>> GetMediaLogsAsync()

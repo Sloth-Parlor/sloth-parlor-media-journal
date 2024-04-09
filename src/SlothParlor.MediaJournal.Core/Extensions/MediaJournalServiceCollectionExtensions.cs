@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SlothParlor.MediaJournal.Core.Application;
 using SlothParlor.MediaJournal.Core.Journal;
+using SlothParlor.MediaJournal.Core.Mapping;
 using SlothParlor.MediaJournal.Data;
 using SlothParlor.MediaJournal.WebApp;
 
@@ -29,8 +30,15 @@ public static class MediaJournalServiceCollectionExtensions
             }
         });
 
+        serviceCollection.AddAutoMapper(mapperConfiguration =>
+        {
+            mapperConfiguration.AddProfile<WatchGroupProfile>();
+            mapperConfiguration.AddProfile<WatchGroupParticipantProfile>();
+        });
+
         serviceCollection.AddScoped<IAppUserProvider, AppUserProvider>();
         serviceCollection.AddScoped<IAppUserManager, AppUserManager>();
+        serviceCollection.AddScoped<IWatchGroupManager, WatchGroupManager>();
         serviceCollection.AddScoped<IUserJournalRepository, UserJournalRepository>((services) => 
         {
             var userProvider = services.GetRequiredService<IAppUserProvider>();
