@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJournal.Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlothParlor.MediaJournal.Contracts", "src\SlothParlor.MediaJournal.Contracts\SlothParlor.MediaJournal.Contracts.csproj", "{C538BC78-BEDA-4826-9924-C162F990EB0A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{70B1F40F-2641-435D-9D9B-69D4A196103C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SlothParlor.MediaJournal.Core.DataAccessTests", "test\SlothParlor.MediaJournal.Core.DataAccessTests\SlothParlor.MediaJournal.Core.DataAccessTests.csproj", "{840F75D4-2CF5-4C2A-B402-A6343F955A3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +45,10 @@ Global
 		{C538BC78-BEDA-4826-9924-C162F990EB0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C538BC78-BEDA-4826-9924-C162F990EB0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C538BC78-BEDA-4826-9924-C162F990EB0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{840F75D4-2CF5-4C2A-B402-A6343F955A3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{840F75D4-2CF5-4C2A-B402-A6343F955A3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{840F75D4-2CF5-4C2A-B402-A6343F955A3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{840F75D4-2CF5-4C2A-B402-A6343F955A3B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -51,6 +59,7 @@ Global
 		{0A61F184-FD52-4B4C-8720-1312AA57D7D8} = {14CFEF01-8518-4A98-B20A-9B65D4A9B61E}
 		{F3B396DE-70FB-4AC1-B499-F35452BBDE11} = {14CFEF01-8518-4A98-B20A-9B65D4A9B61E}
 		{C538BC78-BEDA-4826-9924-C162F990EB0A} = {14CFEF01-8518-4A98-B20A-9B65D4A9B61E}
+		{840F75D4-2CF5-4C2A-B402-A6343F955A3B} = {70B1F40F-2641-435D-9D9B-69D4A196103C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {07500DFE-3B98-4A06-AFF0-CA48D4CCD4CF}
