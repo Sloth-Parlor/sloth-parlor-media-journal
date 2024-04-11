@@ -30,11 +30,7 @@ public static class MediaJournalServiceCollectionExtensions
             }
         });
 
-        serviceCollection.AddAutoMapper(mapperConfiguration =>
-        {
-            mapperConfiguration.AddProfile<WatchGroupProfile>();
-            mapperConfiguration.AddProfile<WatchGroupParticipantProfile>();
-        });
+        serviceCollection.AddAutoMapper(ProfileConfiguration.ConfigureProfiles);
 
         serviceCollection.AddScoped<IAppUserProvider, AppUserProvider>();
         serviceCollection.AddScoped<IAppUserManager, AppUserManager>();
