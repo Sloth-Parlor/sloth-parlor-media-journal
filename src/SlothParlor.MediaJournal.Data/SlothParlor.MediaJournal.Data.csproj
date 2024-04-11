@@ -21,6 +21,12 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
 
+  <!-- Explicit versions for transitive references -->
+  <ItemGroup>
+    <!-- May be removable after upgrade of Npgsql.EntityFrameworkCore.PostgreSQL -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.4" />
+  </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Migrations\" />
   </ItemGroup>
