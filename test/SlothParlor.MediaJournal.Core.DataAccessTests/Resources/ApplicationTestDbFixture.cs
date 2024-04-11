@@ -40,7 +40,7 @@ public class ApplicationTestDbFixture : IAsyncLifetime
 
     public string PostgresUserConnectionString => _container.GetConnectionString();
 
-    public string AppUserConnectionString { get; private set; }
+    public string? AppUserConnectionString { get; private set; }
 
     public async Task InitializeAsync()
     {
