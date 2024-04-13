@@ -1,7 +1,5 @@
-﻿using DotNet.Testcontainers.Builders;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using SlothParlor.MediaJournal.Core.DataAccessTests.Collections;
 using SlothParlor.MediaJournal.Data;
 using Testcontainers.PostgreSql;
 
@@ -23,9 +21,7 @@ public class ApplicationTestDbFixture : IAsyncLifetime
         var containerBuilder = new PostgreSqlBuilder()
             .WithImage(Constants.PostgresImage)
             .WithEnvironment("APPUSER_PASSWORD", "test")
-            .WithBindMount(dbScriptsHostDirectory, "/docker-entrypoint-initdb.d/")
-            .WithAutoRemove(true)
-            .WithCleanUp(true);
+            .WithBindMount(dbScriptsHostDirectory, "/docker-entrypoint-initdb.d/");
 
         _container = containerBuilder.Build();
     }

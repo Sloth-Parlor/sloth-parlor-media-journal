@@ -1,6 +1,6 @@
 ﻿namespace SlothParlor.MediaJournal.Core.Journal;
 
-internal interface IMediaLogRepositoryFactory
+public interface IMediaLogRepositoryFactory
 {
     IMediaLogRepository Create(int watchGroupId);
 }

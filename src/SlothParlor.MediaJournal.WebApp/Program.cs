@@ -86,6 +86,7 @@ builder.Services.AddRazorComponents()
 builder.Services
     .AddCascadingAuthenticationState();
 
+builder.Services.AddMediaJournalDb();
 builder.Services.AddMediaJournalCore();
 
 var app = builder.Build();

@@ -18,7 +18,7 @@ public static class MediaJournalServiceCollectionExtensions
         {
             var configuration = services.GetRequiredService<IConfiguration>();
             var hostEnvironment = services.GetService<IHostEnvironment>();
-            
+
             var appDbConnectionString = configuration.GetConnectionString(Constants.AppDbConnectionStringKey);
             options.UseNpgsql(appDbConnectionString);
 
@@ -35,13 +35,52 @@ public static class MediaJournalServiceCollectionExtensions
         serviceCollection.AddScoped<IAppUserProvider, AppUserProvider>();
         serviceCollection.AddScoped<IAppUserManager, AppUserManager>();
         serviceCollection.AddScoped<IWatchGroupManager, WatchGroupManager>();
-        serviceCollection.AddScoped<IUserJournalRepository, UserJournalRepository>((services) => 
+        serviceCollection.AddScoped<IUserJournalRepository, UserJournalRepository>((services) =>
         {
             var userProvider = services.GetRequiredService<IAppUserProvider>();
 
             return ActivatorUtilities.CreateInstance<UserJournalRepository>(
                 services, userProvider.CurrentUserId);
         });
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection AddMediaJournalDb(this IServiceCollection serviceCollection)
+    {
+        serviceCollection.AddMediaJournalDb((services, options) =>
+        {
+            var configuration = services.GetRequiredService<IConfiguration>();
+            var hostEnvironment = services.GetService<IHostEnvironment>();
+
+            var appDbConnectionString = configuration.GetConnectionString(Constants.AppDbConnectionStringKey);
+
+            options.UseNpgsql(appDbConnectionString);
+
+            if (hostEnvironment is not null && hostEnvironment.IsDevelopment())
+            {
+                options
+                    .EnableDetailedErrors()
+                    .EnableSensitiveDataLogging();
+            }
+        });
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection AddMediaJournalDb(this IServiceCollection serviceCollection, string connectionString)
+    {
+        serviceCollection.AddMediaJournalDb((_, options) =>
+        {
+            options.UseNpgsql(connectionString);
+        });
+
+        return serviceCollection;
+    }
+
+    public static IServiceCollection AddMediaJournalDb(this IServiceCollection serviceCollection, Action<IServiceProvider, DbContextOptionsBuilder>? optionsAction)
+    {
+        serviceCollection.AddDbContext<MediaJournalDbContext>(optionsAction);
 
         return serviceCollection;
     }
