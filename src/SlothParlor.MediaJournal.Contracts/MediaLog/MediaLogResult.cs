@@ -1,3 +1,4 @@
-﻿namespace SlothParlor.MediaJournal.Contracts.MediaLog;
+﻿
+namespace SlothParlor.MediaJournal.Contracts.MediaLog;
 
-public record MediaLogResult;
+public record MediaLogResult(int MediaLogId, string DisplayName, IEnumerable<EntryResult> LogEntries);

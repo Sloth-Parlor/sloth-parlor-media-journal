@@ -101,6 +101,8 @@ public class DbContainerFactory
     {
         return new DbContextOptionsBuilder<MediaJournalDbContext>()
             .UseNpgsql(connectionString)
+            .EnableSensitiveDataLogging()
+            .EnableDetailedErrors()
             .Options;
     }
 }

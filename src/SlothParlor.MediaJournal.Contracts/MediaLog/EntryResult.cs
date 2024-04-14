@@ -1,3 +1,3 @@
 ﻿namespace SlothParlor.MediaJournal.Contracts.MediaLog;
 
-public record EntryResult;
+public record EntryResult(int EntryId, int MediaLogId, string? CandidateName);
