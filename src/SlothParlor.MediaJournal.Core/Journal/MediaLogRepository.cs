@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SlothParlor.MediaJournal.Data;
 
 namespace SlothParlor.MediaJournal.Core.Journal;
@@ -52,7 +53,8 @@ public class MediaLogRepository : IMediaLogRepository
 
     public async Task<Contracts.MediaLog.MediaLogResult> UpdateAsync(
         int mediaLogId,
-        Contracts.MediaLog.MediaLogInput properties)
+        Contracts.MediaLog.MediaLogInput properties,
+        Func<EntityEntry<Data.Models.MediaLog>, Task>? changeTracking = null)
     {
         var data = await FindAsync(mediaLogId);
 
@@ -60,6 +62,8 @@ public class MediaLogRepository : IMediaLogRepository
 
         var result = _dbContext.Update(data);
 
+        await changeTracking?.Invoke(result);
+        
         await _dbContext.SaveChangesAsync();
 
         return _mapper.Map<Contracts.MediaLog.MediaLogResult>(result.Entity);

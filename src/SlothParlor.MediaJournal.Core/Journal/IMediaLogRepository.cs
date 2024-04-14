@@ -1,4 +1,5 @@
-﻿using SlothParlor.MediaJournal.Contracts.MediaLog;
+﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using SlothParlor.MediaJournal.Contracts.MediaLog;
 
 namespace SlothParlor.MediaJournal.Core.Journal;
 
@@ -14,5 +15,5 @@ public interface IMediaLogRepository
 
     Task<MediaLogResult> Get(int mediaLogId);
 
-    Task<MediaLogResult> UpdateAsync(int mediaLogId, MediaLogInput properties);
+    Task<MediaLogResult> UpdateAsync(int mediaLogId, MediaLogInput properties, Func<EntityEntry<Data.Models.MediaLog>, Task>? changeTracking = null);
 }
