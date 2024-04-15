@@ -16,7 +16,7 @@ public class MediaJournalRepositoryTests : IAsyncLifetime
     private readonly IMapper _mapper;
 
     private DbContainerDescriptor _db = null!;
-    private CommonTestData _commonTestData = null!;
+    private CommonData _commonTestData = null!;
     private IMediaLogRepositoryFactory _repositoryFactory = null!;
 
     public MediaJournalRepositoryTests(ITestOutputHelper output, ApplicationMapperFixture mapperFixture)
@@ -31,7 +31,7 @@ public class MediaJournalRepositoryTests : IAsyncLifetime
 
         _repositoryFactory = new MediaLogRepositoryFactory(_db.AppDbContext, _mapper);
 
-        _commonTestData = await CreateCommonTestDataAsync();
+        _commonTestData = await CommonData.Create(_db.AppDbContext);
     }
 
 
@@ -68,9 +68,9 @@ public class MediaJournalRepositoryTests : IAsyncLifetime
         var defaultMediaLog = _commonTestData.DefaultMediaLog;
         var properties = new MediaLogInput()
         {
-            DisplayName = $"NewMediaLog-{Guid.NewGuid()}",
+            DisplayName = $"RenamedMediaLog-{Guid.NewGuid()}",
         };
-        
+
         // Act
         var updatedMediaLog = await repo.UpdateAsync(
             defaultMediaLog.MediaLogId,
@@ -83,78 +83,26 @@ public class MediaJournalRepositoryTests : IAsyncLifetime
         Assert.Equal(defaultMediaLog.MediaLogId, updatedMediaLog.MediaLogId);
         Assert.Equal(properties.DisplayName, updatedMediaLog.DisplayName);
         Assert.Equal(
-            defaultMediaLog.LogEntries?.Select(_mapper.Map<EntryResult>) ?? [], 
+            defaultMediaLog.LogEntries?.Select(_mapper.Map<EntryResult>) ?? [],
             updatedMediaLog.LogEntries);
     }
 
-    private async Task<CommonTestData> CreateCommonTestDataAsync()
+    [Fact]
+    public async Task Repository_Delete()
     {
-        User testuser1 = new()
+        // Arrange
+        var repo = _repositoryFactory.Create(_commonTestData.DefaultWatchGroup.WatchGroupId);
+        var defaultMediaLog = _commonTestData.DefaultMediaLog;
+        var properties = new MediaLogInput()
         {
-            UserId = Guid.NewGuid().ToString(),
-            Email = "testuser1@dev.slothparlor.com",
+            DisplayName = $"RenamedMediaLog-{Guid.NewGuid()}",
         };
 
-        await _db.AppDbContext.AddAsync(testuser1);
+        // Act
+        await repo.DeleteAsync(defaultMediaLog.MediaLogId);
 
-        WatchGroup testUser1DefaultWatchGroup = new()
-        {
-            DisplayName = "Default",
-            Owners = [testuser1],
-        };
-
-        var watchGroupEntityResult = await _db.AppDbContext.AddAsync(testUser1DefaultWatchGroup);
-
-        WatchGroupParticipant[] Participants = [
-            new()
-            {
-                UserId = testuser1.UserId,
-                WatchGroup = testUser1DefaultWatchGroup,
-                DisplayName = "Participant 1",
-            },
-        ];
-        
-        await _db.AppDbContext.AddRangeAsync(Participants);
-
-        MediaLog defaultWatchGroupDefaultMediaLog = new()
-        {
-            DisplayName = "Default",
-            WatchGroup = testUser1DefaultWatchGroup,
-            LogEntries = [
-                new()
-                {
-                    CandidateName = "Knives Out", 
-                    Attendees = [
-                        new EntryAttendee()
-                        {
-                            Participant = Participants[0],
-                        }
-                    ]
-                },
-                new()
-                {
-                    CandidateName = "Jurrasic Park", 
-                    Attendees = [
-                        new EntryAttendee()
-                        {
-                            Participant = Participants[0],
-                        }
-                    ]
-                }
-            ]
-        };
-
-        var mediaLogEntityResult = await _db.AppDbContext.AddAsync(defaultWatchGroupDefaultMediaLog);
-
-        await _db.AppDbContext.SaveChangesAsync();
-
-        watchGroupEntityResult.State = EntityState.Detached;
-        mediaLogEntityResult.State = EntityState.Detached;
-
-        return new(
-            watchGroupEntityResult.Entity,
-            mediaLogEntityResult.Entity);
+        // Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(async () => await _db.AppDbContext.MediaLogs
+            .FirstAsync(ml => ml.MediaLogId == defaultMediaLog.MediaLogId));
     }
-
-    private record CommonTestData(WatchGroup DefaultWatchGroup, MediaLog DefaultMediaLog);
 }
