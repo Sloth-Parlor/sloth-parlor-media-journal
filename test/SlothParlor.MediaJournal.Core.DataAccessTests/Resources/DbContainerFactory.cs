@@ -1,9 +1,12 @@
 
 using System.Diagnostics;
 using System.Reflection;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using SlothParlor.MediaJournal.Data;
 using Testcontainers.PostgreSql;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace SlothParlor.MediaJournal.Core.DataAccessTests.Resources;
 
@@ -12,11 +15,14 @@ public class DbContainerFactory
     private static DbContainerFactory? _defaultInstance;
 
     private readonly PostgreSqlBuilder _containerBuilder;
+    private readonly IMessageSink? _diagnosticMessageSink;
 
     public DbContainerFactory(
-        string appuserPassword = "test"
+        string appuserPassword = "test",
+        IMessageSink? diagnosticMessageSink = null
     )
     {
+        this._diagnosticMessageSink = diagnosticMessageSink;
         var postgresInfraPath = GetPostgresInfraPath();
         var hostDirectories = new {
             initScripts = Path.Combine(postgresInfraPath, "init.d"),
@@ -50,10 +56,12 @@ public class DbContainerFactory
 
         operationStopwatch.Restart();
         await appDbContext.Database.MigrateAsync();
-        stats.Add("DbContextMigrate", operationStopwatch.Elapsed);
+        stats.Add("EfMigrate", operationStopwatch.Elapsed);
         
         taskStopwatch.Stop();
-        stats.Add("TotalInit", taskStopwatch.Elapsed);
+        stats.Add("TotalDbCreation", taskStopwatch.Elapsed);
+
+        DumpStats(stats);
 
         return new DbContainerDescriptor
         {
@@ -63,7 +71,18 @@ public class DbContainerFactory
             AppUserConnectionString = appUserConnectionString,
             Stats = stats,
         };
-    } 
+    }
+
+    private void DumpStats(IDictionary<string, TimeSpan> stats)
+    {
+        if (_diagnosticMessageSink is null)
+        {
+            return;
+        }
+
+        var statsJson = JsonSerializer.Serialize(stats, options: new() { WriteIndented = true });
+        _diagnosticMessageSink.OnMessage(new DiagnosticMessage("DB TestContainer creation stats:\n{0}", statsJson));
+    }
 
     private static string GetPostgresInfraPath()
     {
