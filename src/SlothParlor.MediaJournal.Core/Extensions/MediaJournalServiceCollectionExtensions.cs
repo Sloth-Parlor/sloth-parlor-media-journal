@@ -30,17 +30,21 @@ public static class MediaJournalServiceCollectionExtensions
             }
         });
 
-        serviceCollection.AddAutoMapper(ProfileConfiguration.ConfigureProfiles);
+        serviceCollection.AddAutoMapper(mapperConfig =>
+        {
+            mapperConfig.AddDefaultProfiles();
+        });
 
         serviceCollection.AddScoped<IAppUserProvider, AppUserProvider>();
         serviceCollection.AddScoped<IAppUserManager, AppUserManager>();
-        serviceCollection.AddScoped<IWatchGroupManager, WatchGroupManager>();
-        serviceCollection.AddScoped<IUserJournalRepository, UserJournalRepository>((services) =>
+        serviceCollection.AddScoped<IWatchGroupRepositoryFactory, WatchGroupRepositoryFactory>();
+        serviceCollection.AddScoped<IMediaLogRepositoryFactory, MediaLogRepositoryFactory>();
+        serviceCollection.AddScoped((serviceProvider) =>
         {
-            var userProvider = services.GetRequiredService<IAppUserProvider>();
+            var appUserProvider = serviceProvider.GetRequiredService<IAppUserProvider>();
+            var factory = serviceProvider.GetRequiredService<IWatchGroupRepositoryFactory>();
 
-            return ActivatorUtilities.CreateInstance<UserJournalRepository>(
-                services, userProvider.CurrentUserId);
+            return factory.Create(appUserProvider.CurrentUserId);
         });
 
         return serviceCollection;

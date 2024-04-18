@@ -42,13 +42,13 @@ public class MediaLogRepository : IMediaLogRepository
         return _mapper.Map<Contracts.MediaLog.MediaLogResult>(result.Entity);
     }
 
-    public async Task<IReadOnlyCollection<Contracts.MediaLog.MediaLogResult>> Get() =>
+    public async Task<IReadOnlyCollection<Contracts.MediaLog.MediaLogResult>> GetAsync() =>
         await _dbContext.MediaLogs
             .Where(ml => ml.WatchGroupId == WatchGroupId)
             .ProjectTo<Contracts.MediaLog.MediaLogResult>(_mapper.ConfigurationProvider)
             .ToArrayAsync();
 
-    public async Task<Contracts.MediaLog.MediaLogResult> Get(int mediaLogId) =>
+    public async Task<Contracts.MediaLog.MediaLogResult> GetAsync(int mediaLogId) =>
         _mapper.Map<Contracts.MediaLog.MediaLogResult>(await FindAsync(mediaLogId));
 
     public async Task<Contracts.MediaLog.MediaLogResult> UpdateAsync(

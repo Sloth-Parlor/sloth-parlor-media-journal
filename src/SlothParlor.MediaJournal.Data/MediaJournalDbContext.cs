@@ -29,10 +29,6 @@ public class MediaJournalDbContext : DbContext
             .HasMany(wg => wg.Participants)
             .WithOne(p => p.WatchGroup);
 
-        modelBuilder.Entity<WatchGroup>()
-            .HasMany(wg => wg.Owners)
-            .WithMany();
-
         modelBuilder.Entity<WatchGroupParticipant>()
             .HasOne(p => p.User)
             .WithMany();

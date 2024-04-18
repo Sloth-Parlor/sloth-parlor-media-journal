@@ -7,21 +7,19 @@ using SlothParlor.MediaJournal.Core.Journal;
 using SlothParlor.MediaJournal.Data.Models;
 using Xunit.Abstractions;
 
-namespace SlothParlor.MediaJournal.Core.DataAccessTests.RepositoryTests;
+namespace SlothParlor.MediaJournal.Core.DataAccessTests.Repositories;
 
 [Collection(nameof(CommonTestResourcesCollection))]
-public class MediaJournalRepositoryTests : IAsyncLifetime
+public class MediaLogRepositoryTests : IAsyncLifetime
 {
-    private readonly ITestOutputHelper _output;
     private readonly IMapper _mapper;
 
     private DbContainerDescriptor _db = null!;
     private CommonData _commonTestData = null!;
     private IMediaLogRepositoryFactory _repositoryFactory = null!;
 
-    public MediaJournalRepositoryTests(ITestOutputHelper output, ApplicationMapperFixture mapperFixture)
+    public MediaLogRepositoryTests(DefaultMapperFixture mapperFixture)
     {
-        _output = output;
         _mapper = mapperFixture.Mapper;
     }
 
@@ -37,7 +35,7 @@ public class MediaJournalRepositoryTests : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await Task.CompletedTask;
+        await _db.DisposeAsync();
     }
 
     [Fact]
@@ -50,7 +48,7 @@ public class MediaJournalRepositoryTests : IAsyncLifetime
         {
             DisplayName = $"NewMediaLog-{Guid.NewGuid()}",
         };
-        
+
         // Act
         var mediaLog = await repo.CreateEmptyAsync(properties);
 

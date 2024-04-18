@@ -4,8 +4,7 @@
 @using SlothParlor.MediaJournal.Contracts.WatchGroup
 @using SlothParlor.MediaJournal.Core.Journal
 
-@inject IUserJournalRepository Journal
-@inject IWatchGroupManager WatchGroupManager
+@inject IWatchGroupRepository WatchGroups
 
 <h3>Watch groups</h3>
 
@@ -31,7 +30,7 @@
 @code {
     private List<WatchGroupResult> watchGroups = new List<WatchGroupResult>();
 
-    private WatchGroupProperties WatchGroupFormData { get; set; } = new();
+    private WatchGroupInput WatchGroupFormData { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -40,16 +39,16 @@
 
     private async Task HandleValidSubmit(EditContext context)
     {
-        var requestProperties = (WatchGroupProperties)context.Model;
+        var requestProperties = (WatchGroupInput)context.Model;
 
-        var result = await WatchGroupManager.CreateEmptyWatchGroupAsync(requestProperties);
+        var result = await WatchGroups.CreateAsync(requestProperties);
 
         watchGroups.Add(result);
     }
 
     private async Task RefreshWatchGroups()
     {
-        var data = await Journal.GetWatchGroupsAsync();
+        var data = await WatchGroups.GetAsync();
         watchGroups = data.ToList();
     }
 }

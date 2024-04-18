@@ -5,23 +5,23 @@ using SlothParlor.MediaJournal.Data.Models;
 namespace SlothParlor.MediaJournal.Core.DataAccessTests.Resources;
 
 public record CommonData(
+    User DefaultUser,
     WatchGroup DefaultWatchGroup, 
     MediaLog DefaultMediaLog)
 { 
     public static async Task<CommonData> Create(MediaJournalDbContext dbContext)
     {
-        User testuser1 = new()
+        User defaultUser1 = new()
         {
             UserId = Guid.NewGuid().ToString(),
             Email = "testuser1@dev.slothparlor.com",
         };
 
-        await dbContext.AddAsync(testuser1);
+        var defualtUserEntityResult = await dbContext.AddAsync(defaultUser1);
 
         WatchGroup testUser1DefaultWatchGroup = new()
         {
             DisplayName = "Default",
-            Owners = [testuser1],
         };
 
         var watchGroupEntityResult = await dbContext.AddAsync(testUser1DefaultWatchGroup);
@@ -29,7 +29,7 @@ public record CommonData(
         WatchGroupParticipant[] Participants = [
             new()
             {
-                UserId = testuser1.UserId,
+                UserId = defaultUser1.UserId,
                 WatchGroup = testUser1DefaultWatchGroup,
                 DisplayName = "Participant 1",
             },
@@ -69,10 +69,12 @@ public record CommonData(
 
         await dbContext.SaveChangesAsync();
 
+        defualtUserEntityResult.State = EntityState.Detached;
         watchGroupEntityResult.State = EntityState.Detached;
         mediaLogEntityResult.State = EntityState.Detached;
 
         return new(
+            defualtUserEntityResult.Entity,
             watchGroupEntityResult.Entity,
             mediaLogEntityResult.Entity);
     }
