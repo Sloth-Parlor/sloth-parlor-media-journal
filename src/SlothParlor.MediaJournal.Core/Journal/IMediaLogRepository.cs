@@ -11,9 +11,12 @@ public interface IMediaLogRepository
 
     Task<MediaLogResult> DeleteAsync(int mediaLogId);
 
-    Task<IReadOnlyCollection<MediaLogResult>> Get();
+    Task<IReadOnlyCollection<MediaLogResult>> GetAsync();
 
-    Task<MediaLogResult> Get(int mediaLogId);
+    Task<MediaLogResult> GetAsync(int mediaLogId);
 
-    Task<MediaLogResult> UpdateAsync(int mediaLogId, MediaLogInput properties, Func<EntityEntry<Data.Models.MediaLog>, Task>? changeTracking = null);
+    Task<MediaLogResult> UpdateAsync(
+        int mediaLogId,
+        MediaLogInput properties,
+        Func<EntityEntry<Data.Models.MediaLog>, Task>? changeTracking = null);
 }

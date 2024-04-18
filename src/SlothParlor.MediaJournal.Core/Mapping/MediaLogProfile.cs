@@ -2,7 +2,7 @@
 
 namespace SlothParlor.MediaJournal.Core.Mapping;
 
-internal class MediaLogProfile : Profile
+public class MediaLogProfile : Profile
 {
     public MediaLogProfile()
     {

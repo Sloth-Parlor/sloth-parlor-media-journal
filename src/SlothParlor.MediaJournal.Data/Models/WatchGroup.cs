@@ -14,6 +14,4 @@ public class WatchGroup
     public virtual ICollection<MediaLog>? MediaLogs { get; set; }
 
     public virtual ICollection<WatchGroupParticipant>? Participants { get; set; }
-
-    public virtual ICollection<User>? Owners { get; set; }
 }

@@ -2,7 +2,7 @@
 
 namespace SlothParlor.MediaJournal.Contracts.WatchGroup;
 
-public class WatchGroupProperties
+public class WatchGroupInput
 {
     [Required]
     [MaxLength(512)]
