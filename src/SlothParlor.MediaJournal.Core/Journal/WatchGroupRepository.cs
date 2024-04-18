@@ -55,11 +55,14 @@ public class WatchGroupRepository : IWatchGroupRepository
 
     public async Task<IReadOnlyCollection<Contracts.WatchGroup.WatchGroupResult>> GetAsync()
     {
-        return await _dbContext.WatchGroups
+        var watchGroups = await _dbContext.WatchGroups
             .Include(wg => wg.Participants)
             .Where(wg => wg.Participants!.Any(p => p.UserId == UserId))
-            .ProjectTo<Contracts.WatchGroup.WatchGroupResult>(_mapper.ConfigurationProvider)
             .ToArrayAsync();
+
+        // TODO: Simplify this by using a projection if possible
+        return watchGroups.Select(_mapper.Map<Contracts.WatchGroup.WatchGroupResult>)
+            .ToArray().AsReadOnly();
     }
 
     public async Task<Contracts.WatchGroup.WatchGroupResult> GetAsync(int watchGroupId) =>
