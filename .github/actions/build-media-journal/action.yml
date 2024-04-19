@@ -17,11 +17,18 @@ runs:
       run: dotnet build --configuration Release
       shell: bash
 
+    - name: Test Solution
+      run: |
+        dotnet test \
+          --configuration Release \
+          --no-build
+      shell: bash
+
     - name: Publish Media Journal WebApp
       run: |
         dotnet publish \
           --configuration Release \
-          --no-build --no-restore \
+          --no-build \
           --output ${{ inputs.outputDirectory }} \
           ${{ inputs.solutionRoot }}/src/SlothParlor.MediaJournal.WebApp/
       shell: bash
