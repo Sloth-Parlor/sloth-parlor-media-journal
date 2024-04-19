@@ -106,7 +106,9 @@ jobs:
         run: chmod +x ./efbundle.exe
 
       - name: Migrate Application Database
-        run: ./efbundle.exe --connection-string ${{ secrets.APP_DB_CONNECTION_STRING }}
+        run: |
+          chmod +x ./efbundle.exe
+          ./efbundle.exe --connection "${{ secrets.APP_DB_CONNECTION_STRING }}"
 
       - name: Deploy to Azure Web App
         id: deploy-webapp
