@@ -98,7 +98,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Download artifact from build job
-        uses: actions/download-artifact@
+        uses: actions/download-artifact@v4
         with:
           name: mj-webapp
 
@@ -118,5 +118,3 @@ jobs:
           # env var does value does not necessarily match theGitHub Actions Env name
           slot-name: '${{ vars.APP_SERVICES_DEPLOYMENT_SLOT }}' 
           package: .
-
-      
